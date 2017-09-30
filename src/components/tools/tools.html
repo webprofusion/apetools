@@ -1,0 +1,84 @@
+<div class="container body-content">
+
+    <div class="row">
+        <div class="col-md-8">
+
+
+            <img src="assets/img/logo.png" style="float:left;margin-top:2em;margin-right:2em;height:5em;width:auto;" class="img-circle">
+            <h2>Ape Tools - Image Gorilla</h2>
+            <p>Tired of creating all your icons and splashscreen sizes manually? You've come to the right place.</p>
+            <p>Upload your Icons and/or Splashscreen and we'll do all the hard work to create the sizes you need for each platform:</p>
+            <div class="row">
+                <div class="col-md-6 panel panel-default" style="max-width:600px;">
+                    <div class="panel-body">
+
+                        <h3>1 - Select Your Icon</h3>
+                        <p style="min-height: 100px;">Please select an Icon image in PNG format (transparency allowed) measuring 1024x1024 pixels:</p>
+
+                        <div class="input-group file-upload">
+                            <input type="file" accept="image/*" id="fileupload-icon" v-on:change="selectionChanged('icon', $event)" name="FileUploadIcon">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 panel panel-default" style="max-width:600px;">
+                    <div class="panel-body">
+                        <h3>2 - Select Your Splashscreen</h3>
+                        <p style="min-height: 100px;">Please select a Splashscreen image in PNG format (no transparency) measuring 2048x2048 pixels with
+                            the important stuff centred, we'll then crop and resize from the centre outwards:</p>
+
+                        <div class="input-group file-upload">
+
+                            <input type="file" accept="image/*" id="fileupload-splash" v-on:change="selectionChanged('splash', $event)" name="FileUploadSplash">
+
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <p>We will generate an asset bundle you can download for the the following platforms:</p>
+
+            <div style="width:300px; min-height:100px;display:inline-block; border:1px solid gainsboro; box-shadow: #c0c0c0 2px 2px;padding:1em;margin:1em;float:left;">
+                <h3><i class="fa fa-apple fa-lg fa-fw"></i>iOS</h3>
+                <p>Icons: 18</p>
+                <p>Splashscreens: 16</p>
+
+            </div>
+
+            <p class="alert alert-danger" style="clear:both;margin-top:1em;">
+                Ready to Punch It?
+                <button type="button" v-on:click="process" class="btn btn-danger btn-lg"><i class="fa fa-thumbs-up" aria-hidden="true"></i> Kapow!</button>
+            </p>
+            {{msg}}
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" v-bind:style="{ width: processingProgress + '%' }">
+                    <span class="sr-only">Processing {{processingProgress}}% Complete</span>
+                </div>
+            </div>
+            <div>
+
+            </div>
+
+            <div v-if="isArchiveReady">
+
+
+                <button class="btn btn-primary btn-lg" v-on:click="downloadZip">Download Zip</button>
+            </div>
+
+            <div class="well well-sm">
+                <p>If you like this tool you can help by sponsoring it's continued development:</p>
+                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+                    <input type="hidden" name="cmd" value="_s-xclick">
+                    <input type="hidden" name="hosted_button_id" value="NSABUC22XV9Q2">
+                    <input type="image" src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_LG.gif" style="border:none;" border="0" name="submit"
+                        alt="PayPal – The safer, easier way to pay online.">
+                    <img alt="" border="0" src="https://www.paypalobjects.com/en_GB/i/scr/pixel.gif" width="1" height="1">
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+</div>

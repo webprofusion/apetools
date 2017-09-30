@@ -1,0 +1,28 @@
+$icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/";
+
+@import "~bootstrap-sass/assets/stylesheets/_bootstrap.scss";
+
+html, body {
+    height: 100%;
+}
+footer {
+  text-align: center;
+  padding:1em;
+}
+
+/*file upload styles*/
+
+  input[type=file]
+  {
+    border: 2px solid #068eeb;
+    padding: 1em;
+    background-color: #ede8ff;
+    box-shadow: 3px 3px 3px #c0c0c0;
+  }
+  .panel
+  {
+    min-height:260px;
+   
+  }
+
+  /*end file upload styles*/
