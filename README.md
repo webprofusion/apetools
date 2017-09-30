@@ -1,6 +1,6 @@
 # Ape Tools
 
-## Tools for app developers>
+## Tools for app developers
 Live: https://apetools.webprofusion.com
 
 Don't Go Ape. Go Ape Tools. 
@@ -11,7 +11,7 @@ Generate your App Icons and Splashscreens in all the required sizes to get your 
 
 Note: this is the client side JS port of Ape Tools (which was originally server-side C#). This app uses VueJS with TypeScript.
 
-If you are looking to contribute to development, all the magic happens in: https://github.com/webprofusion/apetools/blob/67914c0542aa09571a39b1da7830d4becad4890d/src/components/tools/tools.ts
+If you are looking to contribute to development, all the magic happens in: https://github.com/webprofusion/apetools/blob/src/components/tools/tools.ts
 
 
 ## Build Setup
