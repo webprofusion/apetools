@@ -9,10 +9,20 @@ interface ImageSpec {
     path?: string;
     width: number;
     height: number;
+    idiom?: string;
+    scale: number;
 }
 
 class FileSpec implements ImageSpec {
-    constructor(public fileName: string, public width: number, public height: number, public path = null) { }
+    constructor(
+        public fileName: string,
+        public width: number,
+        public height: number,
+        public path = null,
+        public idiom: string = null,
+        public scale: number = null,
+        public orientation: string = null
+    ) { }
 }
 
 interface BundleSpec {
@@ -20,14 +30,17 @@ interface BundleSpec {
     path: string;
     prefix?: string;
     imageSet: Array<ImageSpec>;
+    manifest?: string;
 }
 
 interface PlatformSpec {
+    id: string;
     title: string;
     icon: string;
     path: string;
     instructions: string;
     bundleSpecs: Array<BundleSpec>;
+    includeInBundle: boolean;
 }
 
 interface ExportSpec {
@@ -35,17 +48,18 @@ interface ExportSpec {
 }
 
 @Component({
-    template: require('./tools.html') 
+    template: require('./tools.html')
 })
 export class ToolsComponent extends Vue {
 
     protected logger: Logger;
 
     msg: string = '';
-    allPlatforms: Array<PlatformSpec> =null;
+    allPlatforms: Array<PlatformSpec> = null;
     zipArchive: JSZip;
     itemsProcessed: number = 0;
     isArchiveReady: boolean = false;
+    isProcessing: boolean = false;
     selectedIconFile: any = null;
     selectedSplashFile: any = null;
     processingProgress: number = 0;
@@ -53,7 +67,6 @@ export class ToolsComponent extends Vue {
 
     mounted() {
         if (!this.logger) this.logger = new Logger();
-        this.$nextTick(() => this.logger.info('about is ready!'));
 
         this.setupSpecs();
 
@@ -64,59 +77,40 @@ export class ToolsComponent extends Vue {
     setupSpecs() {
         this.allPlatforms = new Array<PlatformSpec>();
 
+
+
         let iOS: PlatformSpec = {
-            path: 'iOS/Resources',
+            id: 'ios',
+            path: 'iOS/',
             icon: 'fa-apple',
             title: 'iOS',
-            instructions: 'Import into your Xcode project',
+            instructions: 'Import into your Xcode project. Note that launch images are no longer supported in iOS, stead you should use a Launch Screen storyboard.',
+            includeInBundle: true,
             bundleSpecs:
             [
                 {
                     category: 'icon',
-                    path: 'icons',
+                    path: 'AppIcon.appiconset',
                     prefix: 'Icon',
+                    manifest: 'Contents.json',
                     imageSet: [
-                        new FileSpec('-small.png', 29, 29),
-                        new FileSpec('.png', 57, 57),
-                        new FileSpec('@2x.png', 114, 114),
-                        new FileSpec('-40.png', 40, 40),
-                        new FileSpec('-40@2x.png', 80, 80),
-                        new FileSpec('-small@3x.png', 87, 87),
-                        new FileSpec('-50.png', 50, 50),
-                        new FileSpec('-small@2x.png', 58, 58),
-                        new FileSpec('-50@2x.png', 100, 100),
-                        new FileSpec('-60.png', 60, 60),
-                        new FileSpec('-72.png', 72, 72),
-                        new FileSpec('-72@2x.png', 144, 144),
-                        new FileSpec('-76.png', 76, 76),
-                        new FileSpec('-40@2x.png', 80, 80),
-                        new FileSpec('-60@2x.png', 120, 120),
-                        new FileSpec('-76@2x.png', 152, 152),
-                        new FileSpec('-167.png', 167, 167),
-                        new FileSpec('-60@3x.png', 180, 180)
+                        new FileSpec('-20x20@2x.png', 20, 20, null, 'iphone', 2),
+                        new FileSpec('-20x20@3x.png', 20, 20, null, 'iphone', 3),
+                        new FileSpec('-29x29@1x.png', 29, 29, null, 'iphone', 1),
+                        new FileSpec('-29x29@2x.png', 29, 29, null, 'iphone', 2),
+                        new FileSpec('-40x40@2x.png', 40, 40, null, 'iphone', 2),
+                        new FileSpec('-40x40@3x.png', 40, 40, null, 'iphone', 3),
+                        new FileSpec('-60x60@2x.png', 60, 60, null, 'iphone', 2),
+                        new FileSpec('-60x60@3x.png', 60, 60, null, 'iphone', 3),
+                        new FileSpec('-marketing-1024x1024.png', 1024, 1024, null, 'iphone', 1),
                     ]
                 },
                 {
                     category: 'splash',
-                    path: 'splash',
-                    prefix: 'Default',
+                    path: 'LaunchImage.launchimage',
+                    prefix: 'LaunchImage',
                     imageSet: [
-                        new FileSpec('~iphone.png', 320, 480),
-                        new FileSpec('@2x~iphone_640x960.png', 640, 960),
-                        new FileSpec('-568h@2x~iphone_640x1136.png', 640, 1136),
-                        new FileSpec('-Landscape~ipad_1024x748.png', 1024, 748),
-                        new FileSpec('-Landscape~ipad_1024x768.png', 1024, 768),
-                        new FileSpec('-Landscape@2x~ipad_2048x1496.png', 2048, 1496),
-                        new FileSpec('-Landscape@2x~ipad_2048x1536.png', 2048, 1536),
-                        new FileSpec('~ipad.png', 1536, 2008),
-                        new FileSpec('-Portrait@2x~ipad_1536x2048.png', 1536, 2048),
-                        new FileSpec('-Portrait@2x~ipad_1536x2008.png', 1536, 2008),
-                        new FileSpec('.png', 768, 1004),
-                        new FileSpec('-Portrait~ipad_768x1024.png', 768, 1024),
-                        new FileSpec('-750@2x~iphone6-portrait_750x1334.png', 750, 1334),
-                        new FileSpec('-750@2x~iphone6-landscape_1334x750.png', 1334, 750),
-                        new FileSpec('-1242@3x~iphone6s-portrait_1242x2208.png', 1242, 2208),
-                        new FileSpec('-1242@3x~iphone6s-landscape_2208x1242.png', 2208, 1242),
+                        /* no longer supported in iOS */
                     ]
                 }
             ]
@@ -125,10 +119,12 @@ export class ToolsComponent extends Vue {
         this.allPlatforms.push(iOS);
 
         let android: PlatformSpec = {
+            id: 'android',
             path: 'android',
             icon: 'fa-android',
             title: 'Android',
             instructions: 'Import into your Android Studio project',
+            includeInBundle: true,
             bundleSpecs:
             [
                 {
@@ -171,10 +167,12 @@ export class ToolsComponent extends Vue {
         this.allPlatforms.push(android);
 
         let windowsStore: PlatformSpec = {
+            id: 'windows',
             path: 'windows',
             icon: 'fa-windows',
             title: 'Windows Store',
             instructions: 'Import into your Visual Studio project',
+            includeInBundle: true,
             bundleSpecs:
             [
                 {
@@ -229,8 +227,16 @@ export class ToolsComponent extends Vue {
     transformAndArchive(platSpec: PlatformSpec, bundleSpec: BundleSpec, fileSpec: ImageSpec, srcData: string, fromCentre: boolean) {
 
         let canvas = document.createElement('canvas');
-        canvas.width = fileSpec.width;
-        canvas.height = fileSpec.height;
+
+        let newWidth = fileSpec.width;
+        let newHeight = fileSpec.height;
+
+        if (fileSpec.scale != null) {
+            newWidth = fileSpec.width * fileSpec.scale;
+            newHeight = fileSpec.height * fileSpec.scale;
+        }
+        canvas.width = newWidth
+        canvas.height = newHeight;
 
         const img = new Image();
 
@@ -241,9 +247,9 @@ export class ToolsComponent extends Vue {
             ctx.webkitImageSmoothingEnabled = true;
             ctx.webkitImageSmoothingEnabled = true;
             ctx.imageSmoothingEnabled = true;
-            ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, fileSpec.width, fileSpec.height);
+            ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, newWidth, newHeight);
 
-            // compress
+            // take genertaed image and archive it in our bundle
             let imgData = canvas.toDataURL('image/png');
             let imgFolder = this.zipArchive.folder('bundle');
 
@@ -258,10 +264,11 @@ export class ToolsComponent extends Vue {
             this.itemsProcessed++;
 
             this.processingProgress = this.itemsProcessed / this.totalTasks * 100;
-            this.msg = 'Processing Completed ' + this.processingProgress;
-
+            this.msg = 'Processing ' + this.processingProgress;
+            this.logger.info(this.msg);
             if (this.processingProgress === 100) {
                 this.isArchiveReady = true;
+                this.isProcessing = false;
             }
 
         };
@@ -276,60 +283,110 @@ export class ToolsComponent extends Vue {
             });
     }
 
+    appendToManifest(generatedManifest: any, bundleSpec: BundleSpec, itemSpec: ImageSpec) {
+        generatedManifest.images.push({
+            'idiom': itemSpec.idiom,
+            'size': itemSpec.width + 'x' + itemSpec.height,
+            'scale': itemSpec.scale + 'x',
+            'filename': bundleSpec.prefix + itemSpec.fileName
+        });
+    }
+
     process() {
         this.msg = 'Processing..';
-
+        this.logger.info('Begin processing..');
+        this.isProcessing = true;
+        this.isArchiveReady = false;
         let numTasks = 0;
-        // compute total number of tasks to perform
+
+        // compute total number of tasks to perform and compile manifests if required
         for (let platformSpec of this.allPlatforms) {
-            for (let bundleSpec of platformSpec.bundleSpecs) {
-                for (let itemSpec of bundleSpec.imageSet) {
-                    if (bundleSpec.category === 'icon' && this.selectedIconFile) {
-                        numTasks++;
+            if (platformSpec.includeInBundle) {
+                for (let bundleSpec of platformSpec.bundleSpecs) {
+                    let generatedManifest = null;
+
+                    // optionally generate a manifest file
+                    if (bundleSpec.manifest != null && platformSpec.id == 'ios') {
+                        generatedManifest = {
+                            'images': [],
+                            'info': { 'version': 1, 'author': 'apetools.webprofusion.com' }
+                        };
                     }
 
-                    if (bundleSpec.category === 'splash' && this.selectedSplashFile) {
-                        numTasks++;
+                    for (let itemSpec of bundleSpec.imageSet) {
+                        if ((bundleSpec.category === 'icon' && this.selectedIconFile) || (bundleSpec.category === 'splash' && this.selectedSplashFile)) {
+                            if (generatedManifest) this.appendToManifest(generatedManifest, bundleSpec, itemSpec);
+                            numTasks++;
+                        }
+                    }
+
+                    if (bundleSpec.manifest != null) {
+                        bundleSpec.manifest = generatedManifest;
+                        this.logger.info(JSON.stringify(bundleSpec.manifest));
                     }
                 }
             }
         }
+
         this.totalTasks = numTasks;
 
-        // process the images for each platform
-        this.processingProgress = 0;
+        this.logger.info(`Generating ${this.totalTasks} assets for bundle..`);
 
-        for (let platformSpec of this.allPlatforms) {
-            for (let bundleSpec of platformSpec.bundleSpecs) {
-                for (let itemSpec of bundleSpec.imageSet) {
-                    let srcItem = null;
-                    let fromCentre: boolean = false;
-                    if (bundleSpec.category === 'icon') {
-                        srcItem = this.selectedIconFile;
-                    }
+        if (this.totalTasks > 0) {
+            // process the images for each platform
+            this.processingProgress = 0;
 
-                    if (bundleSpec.category === 'splash') {
-                        srcItem = this.selectedSplashFile;
-                        fromCentre = true; // splashscreens work from centre and crop rather than resize source to fit
-                    }
-                    setTimeout(() => {
-                        if (srcItem != null) {
-                            // read file, transform size/shape, export and add to zip
-                            let reader = new FileReader();
+            for (let platformSpec of this.allPlatforms) {
+                if (platformSpec.includeInBundle) {
+                    for (let bundleSpec of platformSpec.bundleSpecs) {
+                        for (let itemSpec of bundleSpec.imageSet) {
+                            let srcItem = null;
+                            let fromCentre: boolean = false;
+                            if (bundleSpec.category === 'icon') {
+                                srcItem = this.selectedIconFile;
+                            }
 
-                            reader.addEventListener('load', () => {
-                                let srcData = reader.result;
-                                this.transformAndArchive(platformSpec, bundleSpec, itemSpec, srcData, fromCentre);
-                            }, false);
+                            if (bundleSpec.category === 'splash') {
+                                srcItem = this.selectedSplashFile;
+                                fromCentre = true; // splashscreens work from centre and crop rather than resize source to fit
+                            }
+                            setTimeout(() => {
+                                if (srcItem != null) {
+                                    // read file, transform size/shape, export and add to zip
+                                    let reader = new FileReader();
+
+                                    reader.addEventListener('load', () => {
+                                        let srcData = reader.result;
+                                        this.transformAndArchive(platformSpec, bundleSpec, itemSpec, srcData, fromCentre);
+                                    }, false);
 
 
-                            // fire above load event for file, allow a little time for UI updates
-                            reader.readAsDataURL(srcItem);
+                                    // fire above load event for file, allow a little time for UI updates
+                                    reader.readAsDataURL(srcItem);
+                                }
+
+                            }, 300);
                         }
 
-                    }, 300);
+                        // optionally include generated manifest in archive
+                        if (bundleSpec.manifest) {
+                            // append manifest to archive
+                            let imgFolder = this.zipArchive.folder('bundle');
+                            imgFolder = imgFolder.folder(platformSpec.path);
+                            imgFolder = imgFolder.folder(bundleSpec.path);
+                            imgFolder.file("Contents.json", JSON.stringify(bundleSpec.manifest, null, '\t'));
+
+                        }
+                    }
                 }
             }
+
+            this.logger.info(`Bundle generation completed.`);
+        } else {
+            this.logger.info('Nothing to do..');
+            this.isProcessing = false;
+
+            alert("The apes are bored, there's nothing to do. \nMaybe set an icon or splashscreen and check a few platforms?");
         }
     }
 }
