@@ -9,27 +9,30 @@
             <p>Tired of creating all your icons and splashscreen sizes manually? You've come to the right place.</p>
             <p>Upload your Icons and/or Splashscreen and we'll do all the hard work to create the sizes you need for each platform:</p>
             <div class="row">
-                <div class="col-md-6 panel panel-default" style="max-width:600px;">
-                    <div class="panel-body">
+                <div class="col-md-6" style="max-width:600px;">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
 
-                        <h3>1 - Select Your Icon</h3>
-                        <p style="min-height: 100px;">Please select an Icon image in PNG format (transparency allowed) measuring 1024x1024 pixels:</p>
+                            <h3>1 - Select Your Icon</h3>
+                            <div class="input-group file-upload">
+                                <input type="file" accept="image/*" id="fileupload-icon" v-on:change="selectionChanged('icon', $event)" name="FileUploadIcon">
 
-                        <div class="input-group file-upload">
-                            <input type="file" accept="image/*" id="fileupload-icon" v-on:change="selectionChanged('icon', $event)" name="FileUploadIcon">
+                            </div>
+                            <p>Select an Icon image in PNG format (transparency allowed) measuring 1024x1024 pixels.</p>
+
 
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 panel panel-default" style="max-width:600px;">
-                    <div class="panel-body">
-                        <h3>2 - Select Your Splashscreen</h3>
-                        <p style="min-height: 100px;">Please select a Splashscreen image in PNG format (no transparency) measuring 2048x2048 pixels with
-                            the important stuff centred, we'll then crop and resize from the centre outwards:</p>
-
-                        <div class="input-group file-upload">
-
-                            <input type="file" accept="image/*" id="fileupload-splash" v-on:change="selectionChanged('splash', $event)" name="FileUploadSplash">
+                <div class="col-md-6" style="max-width:600px;">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <h3>2 - Select Your Splashscreen</h3>
+                            <div class="input-group file-upload">
+                                <input type="file" accept="image/*" id="fileupload-splash" v-on:change="selectionChanged('splash', $event)" name="FileUploadSplash">
+                            </div>
+                            <p>Select a Splashscreen image in PNG format (no transparency) measuring 2048x2048 pixels
+                                with the important stuff centred, we'll then crop and resize from the centre outwards:</p>
 
 
                         </div>
@@ -38,10 +41,11 @@
 
             </div>
 
-            <p>We will generate an asset bundle you can download for the the following platforms:</p>
+            <p>We will generate an asset bundle you can download for the following platforms:</p>
 
-            <div style="width:300px; min-height:100px;display:inline-block; border:1px solid gainsboro; box-shadow: #c0c0c0 2px 2px;padding:1em;margin:1em;float:left;">
-                <h3><i class="fa fa-apple fa-lg fa-fw"></i>iOS</h3>
+            <div v-for="platform of allPlatforms" style="width:300px; min-height:100px;display:inline-block; border:1px solid gainsboro; box-shadow: #c0c0c0 2px 2px;padding:1em;margin:1em;float:left;">
+                <h3>
+                    <i class="fa fa-lg fa-fw"  ></i> {{platform.title}}  {{platform.icon}}</h3>
                 <p>Icons: 18</p>
                 <p>Splashscreens: 16</p>
 
@@ -49,7 +53,8 @@
 
             <p class="alert alert-danger" style="clear:both;margin-top:1em;">
                 Ready to Punch It?
-                <button type="button" v-on:click="process" class="btn btn-danger btn-lg"><i class="fa fa-thumbs-up" aria-hidden="true"></i> Kapow!</button>
+                <button type="button" v-on:click="process" class="btn btn-danger btn-lg">
+                    <i class="fa fa-thumbs-up" aria-hidden="true"></i> Kapow!</button>
             </p>
             {{msg}}
             <div class="progress">

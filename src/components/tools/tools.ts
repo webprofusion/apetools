@@ -35,14 +35,14 @@ interface ExportSpec {
 }
 
 @Component({
-    template: require('./tools.html')
+    template: require('./tools.html') 
 })
 export class ToolsComponent extends Vue {
 
     protected logger: Logger;
 
     msg: string = '';
-    allPlatforms: Array<PlatformSpec>;
+    allPlatforms: Array<PlatformSpec> =null;
     zipArchive: JSZip;
     itemsProcessed: number = 0;
     isArchiveReady: boolean = false;

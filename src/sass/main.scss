@@ -1,9 +1,10 @@
-$icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/";
-
-@import "~bootstrap-sass/assets/stylesheets/_bootstrap.scss";
 
 html, body {
     height: 100%;
+}
+
+h3 {
+  font-size: 1.6em;
 }
 footer {
   text-align: center;
@@ -16,13 +17,15 @@ footer {
   {
     border: 2px solid #068eeb;
     padding: 1em;
-    background-color: #ede8ff;
+    background-color: #f1f5ff;
     box-shadow: 3px 3px 3px #c0c0c0;
   }
   .panel
   {
-    min-height:260px;
-   
+    min-height:300px;
+   margin-right:1em;
   }
-
+p {
+  padding-top:1em;
+}
   /*end file upload styles*/
