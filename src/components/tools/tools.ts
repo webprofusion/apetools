@@ -84,7 +84,7 @@ export class ToolsComponent extends Vue {
             path: 'iOS/',
             icon: 'fa-apple',
             title: 'iOS',
-            instructions: 'Import into your Xcode project. Note that launch images are no longer supported in iOS, stead you should use a Launch Screen storyboard.',
+            instructions: 'Import into your Xcode project. Right-click Assets.xcassets, Show in finder. Drag and drop the contents of AppIcon.appiconset to replace the defaults. Note that launch images are no longer supported in iOS, stead you should use a Launch Screen storyboard.',
             includeInBundle: true,
             bundleSpecs:
             [
