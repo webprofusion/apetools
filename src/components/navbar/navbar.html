@@ -1,17 +1,19 @@
-<nav class="navbar navbar-default" v-bind:class="{'navbar-inverse' : inverted}">
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <a class="navbar-brand" href="#">Ape Tools</a>
-        </div>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <a class="navbar-brand" href="#">Ape Tools</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
 
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav">
-                <li v-for="link in links" v-bind:class="{'active' : $route.path == link.path}">
-                  <router-link v-bind:to="link.path">{{link.name}}</router-link>
-                </li>
-            </ul>
-        </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li v-for="link in links" class="nav-item" v-bind:class="{'active' : $route.path == link.path}">
+                <router-link class="nav-link" v-bind:to="link.path">{{link.name}}</router-link>
+            </li>
+
+        </ul>
     </div>
+
 </nav>
+

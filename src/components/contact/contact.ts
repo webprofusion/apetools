@@ -2,9 +2,9 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 
 @Component({
-    template: require('./about.html')
+    template: require('./contact.html')
 })
-export class AboutComponent extends Vue {
+export class ContactComponent extends Vue {
 
   
     mounted() {
