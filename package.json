@@ -9,7 +9,7 @@
     "npm": ">=3"
   },
   "scripts": {
-    "build": "cross-env NODE_ENV=production npm run clean && npm run test && npm run compile",
+    "build": "cross-env NODE_ENV=production npm run clean && npm run compile",
     "build:parts": "npm run sass && npm run compile",
     "ci:teamcity": "karma --env=tc start karma.coverage.js && npm run coverage:remap",
     "ci:jenkins": "karma --env=jk start karma.coverage.js && npm run coverage:remap",
