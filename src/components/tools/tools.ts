@@ -5,6 +5,7 @@ import * as fileSaver from 'file-saver';
 import * as JSZip from 'JSZip';
 
 import Pica from 'pica';
+import { setTimeout } from 'timers';
 
 interface ImageSpec {
     fileName: string;
@@ -13,6 +14,22 @@ interface ImageSpec {
     height: number;
     idiom?: string;
     scale: number;
+    imgData?: string;
+}
+
+interface RGBA {
+    r: number;
+    g: number;
+    b: number;
+    a: number;
+}
+
+interface ImageDataSet {
+    // base64 version of image
+    imgSrcDataBase64: string;
+
+    // img data version of image
+    imgData: ImageData;
 }
 
 class FileSpec implements ImageSpec {
@@ -23,7 +40,8 @@ class FileSpec implements ImageSpec {
         public path = null,
         public idiom: string = null,
         public scale: number = null,
-        public orientation: string = null
+        public orientation: string = null,
+
     ) { }
 }
 
@@ -52,6 +70,7 @@ interface ExportSpec {
     platforms: Array<PlatformSpec>;
 }
 
+
 @Component({
     template: require('./tools.html')
 })
@@ -69,6 +88,14 @@ export class ToolsComponent extends Vue {
     selectedSplashFile: any = null;
     processingProgress: number = 0;
     totalTasks: number = 0;
+
+    iconSrcData: string = null;
+    iconImgData: ImageData = null;
+    splashSrcData: string = null;
+    splashImgData: ImageData = null;
+    splashColourSample: RGBA = null;
+
+    pica = new Pica();
 
 
     mounted() {
@@ -90,7 +117,7 @@ export class ToolsComponent extends Vue {
             path: 'iOS/',
             icon: 'fa-apple',
             title: 'iOS',
-            instructions: 'Import into your Xcode project. Right-click Assets.xcassets, Show in finder. Drag and drop the contents of AppIcon.appiconset to replace the defaults. Note that launch images are no longer supported in iOS, stead you should use a Launch Screen storyboard.',
+            instructions: 'Import into your Xcode project. Right-click Assets.xcassets, Show in finder. Drag and drop the contents of AppIcon.appiconset to replace the defaults. Note that launch images are no longer supported in iOS, instead you should use a Launch Screen storyboard.',
             includeInBundle: true,
             bundleSpecs:
                 [
@@ -248,61 +275,162 @@ export class ToolsComponent extends Vue {
         }
     }
 
-    transformAndArchive(platSpec: PlatformSpec, bundleSpec: BundleSpec, fileSpec: ImageSpec, srcData: string, fromCentre: boolean) {
+    samplePixelValue(imagedata: ImageData, sampleX: number, sampleY: number): RGBA {
 
-        let canvas = document.createElement('canvas');
+        //  get pixelArray from imagedata object
+        let data = imagedata.data;
 
-        let newWidth = fileSpec.width;
-        let newHeight = fileSpec.height;
+        //  image data is array of RGBA values (4 bytes). Pixel sample offset is Y value * width of image, plus X pixels across. 
+        let i = ((sampleY * imagedata.width) + sampleX) * 4;
 
-        if (fileSpec.scale != null) {
-            newWidth = fileSpec.width * fileSpec.scale;
-            newHeight = fileSpec.height * fileSpec.scale;
-        }
-        canvas.width = newWidth;
-        canvas.height = newHeight;
+        //  get RGBA values
+        let r = data[i];
+        let g = data[i + 1];
+        let b = data[i + 2];
+        let a = data[i + 3];
 
-
-
-        const img = new Image();
-
-        img.src = srcData;
-        img.onload = () => {
-            let pica = new Pica();
-
-            pica.resize(img, canvas, {
-                unsharpAmount: 80,
-                unsharpRadius: 0.6,
-                unsharpThreshold: 2,
-                alpha: bundleSpec.useAlpha
-            })
-                .then((result) => {
-                    console.log('resize done!');
-                    // take generated image and archive it in our bundle
-                    let imgData = canvas.toDataURL('image/png');
-                    let imgFolder = this.zipArchive.folder('bundle');
-
-                    imgFolder = imgFolder.folder(platSpec.path);
-                    if (bundleSpec.path) imgFolder = imgFolder.folder(bundleSpec.path);
-                    if (fileSpec.path) imgFolder = imgFolder.folder(fileSpec.path);
-                    let imgDataBase64 = imgData.replace(/^data:image\/(png|jpg);base64,/, '');
-
-                    // add file to zip folder
-                    imgFolder.file(bundleSpec.prefix + fileSpec.fileName, imgDataBase64, { base64: true });
-
-                    this.itemsProcessed++;
-
-                    this.processingProgress = this.itemsProcessed / this.totalTasks * 100;
-                    this.msg = 'Processing ' + this.processingProgress;
-                    this.logger.info(this.msg);
-                    if (this.processingProgress === 100) {
-                        this.isArchiveReady = true;
-                        this.isProcessing = false;
-                    }
-
-                });
-
+        let result: RGBA = {
+            r: data[i],
+            g: data[i + 1],
+            b: data[i + 2],
+            a: data[i + 3]
         };
+        return result;
+    }
+
+    getImageData(imgSrcData: string): Promise<ImageData> {
+
+        let imgDataPromise = new Promise<ImageData>((resolve, reject) => {
+
+            let canvas = document.createElement('canvas');
+            let context = canvas.getContext('2d');
+
+            const img = new Image();
+
+            img.onload = () => {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                context.drawImage(img, 0, 0, canvas.width, canvas.height);
+                setTimeout(() => {
+                    let imgData = context.getImageData(0, 0, img.width, img.height);
+                    resolve(imgData);
+                }, 500);
+
+                return;
+            };
+
+            img.src = imgSrcData;
+        });
+
+        return imgDataPromise;
+    }
+
+    transformAndArchive(platSpec: PlatformSpec, bundleSpec: BundleSpec, fileSpec: ImageSpec, srcImage: ImageDataSet, fromCentre: boolean) {
+
+        return new Promise<any>((resolve, reject) => {
+
+            // create new canvas for our target image render
+            let canvas = document.createElement('canvas');
+
+            let newWidth = fileSpec.width;
+            let newHeight = fileSpec.height;
+
+            if (fileSpec.scale != null) {
+                newWidth = fileSpec.width * fileSpec.scale;
+                newHeight = fileSpec.height * fileSpec.scale;
+            }
+
+            // TODO: for fixed aspect ratio, work out largest width or height
+            // for resize from centre, sample corner value and fill canvas, then centre resized image in canvas
+            canvas.width = newWidth;
+            canvas.height = newHeight;
+
+            if (bundleSpec.maintainAspectRatio) {
+                let aspectRatio = srcImage.imgData.width / srcImage.imgData.height;
+                if (fileSpec.width > fileSpec.height) {
+
+                    // original height / original width * new width = new height
+                    // landscape aspect
+
+                    let maxDimension = fileSpec.height;
+                    canvas.width = maxDimension;
+                    canvas.height = srcImage.imgData.height / srcImage.imgData.width * maxDimension;
+
+
+                } else {
+                    // portrait aspect
+                    // original width / original height * new height = new width
+
+                    let maxDimension = fileSpec.width;
+                    canvas.width = srcImage.imgData.width / srcImage.imgData.height * maxDimension;
+                    canvas.height = maxDimension;
+
+                }
+
+
+            }
+            const img = new Image();
+
+            img.onload = () => {
+
+                setTimeout(() => {
+
+                    // if image has no alpha, fill with background color based on sample
+
+
+
+                    this.pica.resize(img, canvas, {
+                        unsharpAmount: 80,
+                        unsharpRadius: 0.6,
+                        unsharpThreshold: 2,
+                        alpha: bundleSpec.useAlpha
+                    })
+                        .then((result) => {
+
+                            if (bundleSpec.maintainAspectRatio) {
+                                let destCanvas = document.createElement('canvas');
+                                destCanvas.width = fileSpec.width;
+                                destCanvas.height = fileSpec.height;
+
+                                let sample: RGBA = this.splashColourSample;
+
+                                let ctx = destCanvas.getContext('2d');
+                                ctx.fillStyle = `rgba(${sample.r},${sample.g},${sample.b},${sample.a});`;
+                                ctx.fillRect(0, 0, destCanvas.width, destCanvas.height);
+                                // centre destination coord to draw image to
+                                let destx = (destCanvas.width - canvas.width) / 2;
+                                let desty = (destCanvas.height - canvas.height) / 2;
+                                if (destx < 0) destx = 0;
+                                if (desty < 0) desty = 0;
+
+                                console.log(`fileSpec ${fileSpec.width}x${fileSpec.height} : Src img: ${srcImage.imgData.width}x${srcImage.imgData.height} , Src Canvas ${canvas.width} x ${canvas.height} Dest: ${destCanvas.width} x ${destCanvas.height} destX:${destx}, destY:${desty}`);
+                                ctx.drawImage(canvas, destx, desty);
+                                canvas = destCanvas;
+                            }
+                            console.log('resize done, adding to bundle!');
+                            // take generated image and archive it in our bundle
+                            let imgData = canvas.toDataURL('image/png');
+
+                            fileSpec.imgData = imgData;
+
+                            let imgFolder = this.zipArchive.folder('bundle');
+
+                            imgFolder = imgFolder.folder(platSpec.path);
+                            if (bundleSpec.path) imgFolder = imgFolder.folder(bundleSpec.path);
+                            if (fileSpec.path) imgFolder = imgFolder.folder(fileSpec.path);
+                            let imgDataBase64 = imgData.replace(/^data:image\/(png|jpg);base64,/, '');
+
+                            // add file to zip folder
+                            imgFolder.file(bundleSpec.prefix + fileSpec.fileName, imgDataBase64, { base64: true });
+
+                            return resolve(true);
+
+                        });
+                }, 500);
+
+            };
+            img.src = srcImage.imgSrcDataBase64;
+        });
 
     }
 
@@ -323,7 +451,67 @@ export class ToolsComponent extends Vue {
         });
     }
 
-    process() {
+    getSourceImageForProcessing(srcItemCategory: string, srcItemBlob: any): Promise<ImageDataSet> {
+
+
+        let promise = new Promise<any>((resolve, reject) => {
+            if (srcItemCategory === 'icon' && this.iconSrcData != null) {
+                resolve({
+                    imgSrcDataBase64: this.iconSrcData,
+                    imgData: this.iconImgData
+                });
+                return;
+
+            }
+
+            if (srcItemCategory === 'splash' && this.splashSrcData != null) {
+                resolve({
+                    imgSrcDataBase64: this.iconSrcData,
+                    imgData: this.iconImgData
+                });
+                return;
+
+            }
+
+            // not got cached values, read image data blob and process
+
+            let reader = new FileReader();
+
+            reader.addEventListener('load', () => {
+                let srcData = reader.result;
+
+                return this.getImageData(srcData).then((imgData) => {
+
+                    // cache values
+                    if (srcItemCategory === 'icon') {
+                        this.iconSrcData = srcData;
+                        this.iconImgData = imgData;
+                    }
+
+                    if (srcItemCategory === 'splash') {
+                        this.splashSrcData = srcData;
+                        this.splashImgData = imgData;
+                    }
+
+                    resolve({
+                        imgSrcDataBase64: srcData,
+                        imgData: imgData
+                    });
+                    return;
+                });
+
+            }, false);
+
+
+            // fire above load event for file
+            reader.readAsDataURL(srcItemBlob);
+        });
+
+        return promise;
+
+    }
+
+    async process() {
         this.msg = 'Processing..';
         this.logger.info('Begin processing..');
         this.isProcessing = true;
@@ -367,39 +555,65 @@ export class ToolsComponent extends Vue {
             // process the images for each platform
             this.processingProgress = 0;
 
+            // cache image data
+            if (this.selectedIconFile) await this.getSourceImageForProcessing('icon', this.selectedIconFile);
+            if (this.selectedSplashFile) {
+                await this.getSourceImageForProcessing('splash', this.selectedSplashFile);
+
+                // sample splash corner colour for canvas fill
+                this.splashColourSample = this.samplePixelValue(this.splashImgData, 0, 0);
+            }
+
+
             for (let platformSpec of this.allPlatforms) {
                 if (platformSpec.includeInBundle) {
                     for (let bundleSpec of platformSpec.bundleSpecs) {
                         for (let itemSpec of bundleSpec.imageSet) {
                             let srcItem = null;
                             let fromCentre: boolean = false;
+
                             if (bundleSpec.category === 'icon') {
                                 srcItem = this.selectedIconFile;
                             }
 
                             if (bundleSpec.category === 'splash') {
                                 srcItem = this.selectedSplashFile;
-                                fromCentre = true; // splashscreens work from centre and crop rather than resize source to fit
                             }
-                            setTimeout(() => {
-                                if (srcItem != null) {
-                                    // read file, transform size/shape, export and add to zip
-                                    let reader = new FileReader();
-
-                                    reader.addEventListener('load', () => {
-                                        let srcData = reader.result;
-                                        this.transformAndArchive(platformSpec, bundleSpec, itemSpec, srcData, fromCentre);
-                                    }, false);
+                            if (srcItem != null) {
 
 
-                                    // fire above load event for file, allow a little time for UI updates
-                                    reader.readAsDataURL(srcItem);
-                                }
+                                setTimeout(async () => {
+                                    await this.getSourceImageForProcessing(bundleSpec.category, srcItem).then((imgBundle: ImageDataSet) => {
 
-                            }, 300);
+                                        this.transformAndArchive(platformSpec, bundleSpec, itemSpec, imgBundle, fromCentre)
+                                            .then(() => {
+
+                                                this.itemsProcessed++;
+
+                                                this.processingProgress = Math.round(this.itemsProcessed / this.totalTasks * 100);
+                                                this.msg = 'Processing ' + this.processingProgress + '%';
+                                                this.logger.info(this.msg);
+                                                if (this.processingProgress === 100) {
+                                                    this.isArchiveReady = true;
+                                                    this.isProcessing = false;
+                                                }
+
+                                                // ask vue to re-render
+                                                this.$forceUpdate();
+                                            });
+                                    });
+                                }, 1000);
+
+
+
+
+
+                            }
+
+
                         }
 
-                        // optionally include generated manifest in archive
+                        // optionally include generated manifest in archiver
                         if (bundleSpec.manifest) {
                             // append manifest to archive
                             let imgFolder = this.zipArchive.folder('bundle');

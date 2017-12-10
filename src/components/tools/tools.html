@@ -32,7 +32,7 @@
                                 <input type="file" accept="image/*" id="fileupload-splash" v-on:change="selectionChanged('splash', $event)" name="FileUploadSplash">
                             </div>
                             <p>Select a Splashscreen image in PNG format (no transparency) measuring 2048x2048 pixels with the
-                                important stuff centred, we'll then crop and resize from the centre outwards:</p>
+                                important stuff centred, we'll then crop and resize from the centre outwards.</p>
 
 
                         </div>
@@ -54,20 +54,23 @@
                     <label for="checkbox"> include in bundle </label>
 
 
-                <div v-for="bundle of platform.bundleSpecs">
-                    <h2>{{bundle.category}}</h2>
-         
+                    <div v-for="bundle of platform.bundleSpecs">
+                        <h2>{{bundle.category}}</h2>
+
                         <div v-for="fileSpec of bundle.imageSet">
-                            <p>{{fileSpec.path}} {{fileSpec.fileName}}:  {{fileSpec.width}}x{{fileSpec.height}}</p>
-                            </div>
+                            <p>{{fileSpec.path}} {{fileSpec.fileName}}: {{fileSpec.width}}x{{fileSpec.height}}
+                                <img v-if="fileSpec.imgData" :src="fileSpec.imgData" style="max-width: 200px; max-height:200px;" class="img-thumbnail">
+
+                            </p>
+                        </div>
 
                     </div>
 
 
-                    
+
 
                 </div>
-                <h4 class="clearfix" style="clear: left">3. Make the magic happen</h4>
+                <h4 class="clearfix" style="clear: left">3. Where the magic happens</h4>
 
                 <p v-if="!isProcessing && !isArchiveReady" class="alert alert-info">
                     Ready to Punch It?
@@ -87,6 +90,8 @@
 
                 <div v-if="isArchiveReady">
                     <button class="btn btn-primary btn-lg" v-on:click="downloadZip">Download Zip</button>
+
+                    <a href="#/tools/imagegorilla">Try again</a>
                 </div>
             </div>
 
