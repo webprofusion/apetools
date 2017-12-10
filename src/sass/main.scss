@@ -1,31 +1,61 @@
 
 html, body {
     height: 100%;
+    color:#858d92;
 }
-
+/*
 h3 {
   font-size: 1.6em;
 }
+
+*/
+
 footer {
   text-align: center;
   padding:1em;
 }
+.navbar {
+  margin-bottom:2em;
+}
 
+h2,h2,h3,h4 {
+  text-shadow: 20px 13px 7px #e6e6e6;
+}
 /*file upload styles*/
 
   input[type=file]
   {
-    border: 2px solid #068eeb;
+    border: 2px solid #6d6e6e;
     padding: 1em;
-    background-color: #f1f5ff;
+    background-color: #f9f9f9;
     box-shadow: 3px 3px 3px #c0c0c0;
+    margin:1em;
   }
-  .panel
-  {
-    min-height:300px;
-   margin-right:1em;
-  }
-p {
-  padding-top:1em;
-}
   /*end file upload styles*/
+
+
+  /* from https://css-tricks.com/snippets/css/shake-css-keyframe-animation/ */
+  .ape:hover {
+    animation: shake 0.8s cubic-bezier(.36,.07,.19,.97) both infinite;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+  
+  @keyframes shake {
+    10%, 90% {
+      transform: translate3d(-1px, 0, 0);
+    }
+    
+    20%, 80% {
+      transform: translate3d(2px, 0, 0);
+    }
+  
+    30%, 50%, 70% {
+      transform: translate3d(-4px, 0, 0);
+    }
+  
+    40%, 60% {
+      transform: translate3d(4px, 0, 0);
+    }
+  }

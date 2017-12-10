@@ -7,8 +7,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Ape Tools: Don't Go Ape - Go Ape Tools. App Icon and Splashscreen Generator. Make your app happen.</title>
   <meta name="description" content="Ape Tools - Generate the many sizes of icons and splashscreens (launch images) your app will require in order to get your app published to all of the major app stores.">
-  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-  <link href="https://maxcdn.bootstrapcdn.com/bootswatch/4.0.0-beta.2/sketchy/bootstrap.min.css" rel="stylesheet" integrity="sha384-9BaUahJwNez+jmowV4jSdSdZIlie6a+VnhBnuzVvBPdvUPC3dDLYIg31Tgw5UzLP" crossorigin="anonymous">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+    crossorigin="anonymous">
+  <link href="https://maxcdn.bootstrapcdn.com/bootswatch/4.0.0-beta.2/sketchy/bootstrap.min.css" rel="stylesheet" integrity="sha384-9BaUahJwNez+jmowV4jSdSdZIlie6a+VnhBnuzVvBPdvUPC3dDLYIg31Tgw5UzLP"
+    crossorigin="anonymous">
 </head>
 
 <body>
@@ -17,17 +19,51 @@
     <navbar :inverted="true"></navbar>
     <router-view>
       <h1>Ape Tools</h1>
-      Don't Go Ape, Go Ape Tools.
-      Get apps done quicker.
-      
-      Create all the required sizes of Icons and Splashscreens for your app instantly for all major platforms
+      Don't Go Ape, Go Ape Tools. Get apps done quicker. Create all the required sizes of Icons and Splashscreens for your app
+      instantly for all major platforms
     </router-view>
   </div>
 
   <hr>
   <footer>
-      <p>a <a href="http://webprofusion.com">webprofusion</a> creation © 2017</p>
+    <p>
+      <a href="http://webprofusion.com">webprofusion</a> creation © 2017.
+      <br> Check out the code and submit issues on GitHub:
+      <i class="fa fa-github fa-spin fa-3x fa-fw" aria-hidden="true"></i>
+      <a href="https://github.com/webprofusion/apetools">https://github.com/webprofusion/apetools</a>
+    </p>
   </footer>
+
+  <script>
+    // analytics
+    (function (i, s, o, g, r, a, m) {
+      i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+        (i[r].q = i[r].q || []).push(arguments)
+      }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-76936-15', 'auto');
+    ga('send', 'pageview');
+
+    // twitter sharing
+    window.twttr = (function (d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0],
+        t = window.twttr || {};
+      if (d.getElementById(id)) return t;
+      js = d.createElement(s);
+      js.id = id;
+      js.src = "https://platform.twitter.com/widgets.js";
+      fjs.parentNode.insertBefore(js, fjs);
+
+      t._e = [];
+      t.ready = function (f) {
+        t._e.push(f);
+      };
+
+      return t;
+    }(document, "script", "twitter-wjs"));
+  </script>
 </body>
 
 </html>
