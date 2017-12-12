@@ -354,7 +354,7 @@ export class ToolsComponent extends Vue {
 
                     let maxDimension = fileSpec.height;
                     canvas.width = maxDimension;
-                    canvas.height = srcImage.imgData.height / srcImage.imgData.width * maxDimension;
+                    canvas.height = (srcImage.imgData.height / srcImage.imgData.width) * maxDimension;
 
 
                 } else {
@@ -362,7 +362,7 @@ export class ToolsComponent extends Vue {
                     // original width / original height * new height = new width
 
                     let maxDimension = fileSpec.width;
-                    canvas.width = srcImage.imgData.width / srcImage.imgData.height * maxDimension;
+                    canvas.width = (srcImage.imgData.width / srcImage.imgData.height) * maxDimension;
                     canvas.height = maxDimension;
 
                 }
@@ -395,7 +395,7 @@ export class ToolsComponent extends Vue {
                                 let sample: RGBA = this.splashColourSample;
 
                                 let ctx = destCanvas.getContext('2d');
-                                ctx.fillStyle = `rgba(${sample.r},${sample.g},${sample.b},${sample.a});`;
+                                ctx.fillStyle = 'rgb(' + sample.r + ',' + sample.g + ',' + sample.b + ')';
                                 ctx.fillRect(0, 0, destCanvas.width, destCanvas.height);
                                 // centre destination coord to draw image to
                                 let destx = (destCanvas.width - canvas.width) / 2;
@@ -480,25 +480,31 @@ export class ToolsComponent extends Vue {
             reader.addEventListener('load', () => {
                 let srcData = reader.result;
 
-                return this.getImageData(srcData).then((imgData) => {
+                // use setTimeout to allow image time to complete load, otherwise reading image data doesn't always work
+                setTimeout(() => {
 
-                    // cache values
-                    if (srcItemCategory === 'icon') {
-                        this.iconSrcData = srcData;
-                        this.iconImgData = imgData;
-                    }
 
-                    if (srcItemCategory === 'splash') {
-                        this.splashSrcData = srcData;
-                        this.splashImgData = imgData;
-                    }
 
-                    resolve({
-                        imgSrcDataBase64: srcData,
-                        imgData: imgData
+                    return this.getImageData(srcData).then((imgData) => {
+
+                        // cache values
+                        if (srcItemCategory === 'icon') {
+                            this.iconSrcData = srcData;
+                            this.iconImgData = imgData;
+                        }
+
+                        if (srcItemCategory === 'splash') {
+                            this.splashSrcData = srcData;
+                            this.splashImgData = imgData;
+                        }
+
+                        resolve({
+                            imgSrcDataBase64: srcData,
+                            imgData: imgData
+                        });
+                        return;
                     });
-                    return;
-                });
+                }, 500);
 
             }, false);
 
