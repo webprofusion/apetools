@@ -466,8 +466,8 @@ export class ToolsComponent extends Vue {
 
             if (srcItemCategory === 'splash' && this.splashSrcData != null) {
                 resolve({
-                    imgSrcDataBase64: this.iconSrcData,
-                    imgData: this.iconImgData
+                    imgSrcDataBase64: this.splashSrcData,
+                    imgData: this.splashImgData
                 });
                 return;
 
