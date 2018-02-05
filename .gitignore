@@ -7,3 +7,5 @@ src/css
 src/**/*.js
 src/**/*.map
 *.log
+
+\.vscode/

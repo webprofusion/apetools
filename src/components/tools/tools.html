@@ -42,34 +42,7 @@
             </div>
 
             <div v-if="selectedIconFile || selectedSplashFile">
-                <p>We will generate an asset bundle you can download for the following platforms:</p>
 
-                <div v-for="platform of allPlatforms" style="width:300px; min-height:100px;display:inline-block; border:1px solid gainsboro; box-shadow: #c0c0c0 2px 2px;padding:1em;margin:1em;float:left;">
-                    <h3>
-                        <i class="fa fa-lg fa-fw" v-bind:class="platform.icon"></i> {{platform.title}}</h3>
-                    <p class="lead">{{platform.bundleSpecs.filter(f=>f.category=='icon')[0].imageSet.length}} icon sizes, {{platform.bundleSpecs.filter(f=>f.category=='splash')[0].imageSet.length}}
-                        splashscreen sizes. </p>
-                    <p>{{platform.instructions}}</p>
-                    <input type="checkbox" :id="platform.path" v-model="platform.includeInBundle">
-                    <label for="checkbox"> include in bundle </label>
-
-
-                    <div v-for="bundle of platform.bundleSpecs">
-                        <h2>{{bundle.category}}</h2>
-
-                        <div v-for="fileSpec of bundle.imageSet">
-                            <p>{{fileSpec.path}} {{fileSpec.fileName}}: {{fileSpec.width}}x{{fileSpec.height}}
-                                <img v-if="fileSpec.imgData" :src="fileSpec.imgData" style="max-width: 200px; max-height:200px;" class="img-thumbnail">
-
-                            </p>
-                        </div>
-
-                    </div>
-
-
-
-
-                </div>
                 <h4 class="clearfix" style="clear: left">3. Where the magic happens</h4>
 
                 <p v-if="!isProcessing && !isArchiveReady" class="alert alert-info">
@@ -90,16 +63,40 @@
 
                 <div v-if="isArchiveReady">
                     <button class="btn btn-primary btn-lg" v-on:click="downloadZip">Download Zip</button>
+                    <router-link  to="/tools/imagegorilla">Try Again</router-link>
+               
+                </div>
 
-                    <a href="#/tools/imagegorilla">Try again</a>
+                <p>We will generate an asset bundle you can download for the following platforms:</p>
+
+                <div v-for="platform of allPlatforms" style="width:300px; min-height:100px;display:inline-block; border:1px solid gainsboro; box-shadow: #c0c0c0 2px 2px;padding:1em;margin:1em;float:left;">
+                    <h3>
+                        <i class="fa fa-lg fa-fw" v-bind:class="platform.icon"></i> {{platform.title}}</h3>
+                    <p class="lead">{{platform.bundleSpecs.filter(f=>f.category=='icon')[0].imageSet.length}} icon sizes, {{platform.bundleSpecs.filter(f=>f.category=='splash')[0].imageSet.length}}
+                        splashscreen sizes. </p>
+                    <p>{{platform.instructions}}</p>
+                    <input type="checkbox" :id="platform.path" v-model="platform.includeInBundle">
+                    <label for="checkbox"> include in bundle </label>
+
+
+                    <div v-for="bundle of platform.bundleSpecs">
+                        <h2>{{bundle.category}}</h2>
+
+                        <ul class="list-group" v-for="fileSpec of bundle.imageSet">
+                            <li class="list-group-item">{{fileSpec.path}} {{fileSpec.prefix}} {{fileSpec.idiom}} {{fileSpec.fileName}}: {{fileSpec.width*fileSpec.scale}}x{{fileSpec.height*fileSpec.scale}}
+                                <img v-if="fileSpec.imgData" :src="fileSpec.imgData" style="max-width: 200px; max-height:200px;" class="img-thumbnail">
+
+                            </li>
+                        </ul>
+
+                    </div>
                 </div>
             </div>
 
 
             <div class="well well-sm">
                 <p> We'd really appreciate it if you could tell others about this app:
-                    <a href="https://twitter.com/share" class="twitter-share-button"
-                        data-url="http://apetools.webprofusion.com" data-text="Check out Ape Tools, the quick way to generate all the icons and splash screens for your app:"
+                    <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://apetools.webprofusion.com" data-text="Check out Ape Tools, the quick way to generate all the icons and splash screens for your app:"
                         data-via="webprofusion">Share</a>
                 </p>
                 <p>If you like this tool you can help by sponsoring it's continued development:</p>

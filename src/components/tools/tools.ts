@@ -5,6 +5,7 @@ import * as fileSaver from 'file-saver';
 import * as JSZip from 'JSZip';
 
 import Pica from 'pica';
+
 import { setTimeout } from 'timers';
 
 interface ImageSpec {
@@ -97,7 +98,6 @@ export class ToolsComponent extends Vue {
 
     pica = new Pica();
 
-
     mounted() {
         if (!this.logger) this.logger = new Logger();
 
@@ -130,14 +130,18 @@ export class ToolsComponent extends Vue {
                         maintainAspectRatio: false,
                         resizeFromCentre: false,
                         imageSet: [
+                            new FileSpec('-20x20@1x.png', 20, 20, null, 'ipad', 1),
                             new FileSpec('-20x20@2x.png', 20, 20, null, 'iphone', 2),
                             new FileSpec('-20x20@3x.png', 20, 20, null, 'iphone', 3),
                             new FileSpec('-29x29@1x.png', 29, 29, null, 'iphone', 1),
                             new FileSpec('-29x29@2x.png', 29, 29, null, 'iphone', 2),
+                            new FileSpec('-29x29@3x.png', 29, 29, null, 'iphone', 3),
                             new FileSpec('-40x40@2x.png', 40, 40, null, 'iphone', 2),
                             new FileSpec('-40x40@3x.png', 40, 40, null, 'iphone', 3),
                             new FileSpec('-60x60@2x.png', 60, 60, null, 'iphone', 2),
                             new FileSpec('-60x60@3x.png', 60, 60, null, 'iphone', 3),
+                            new FileSpec('-76x76@1x.png', 76, 76, null, 'ipad', 1),
+                            new FileSpec('-76x76@2x.png', 76, 76, null, 'ipad', 2),
                             new FileSpec('-marketing-1024x1024.png', 1024, 1024, null, 'iphone', 1),
                         ]
                     },
@@ -150,6 +154,22 @@ export class ToolsComponent extends Vue {
                         resizeFromCentre: true,
                         imageSet: [
                             /* no longer supported in iOS */
+                            new FileSpec('~iphone-320x480.png', 320, 480, null, 'iphone', 1),
+                            new FileSpec('~iphone_640x960.png', 640, 960, null, 'iphone', 1),
+                            new FileSpec('-568h@2x~iphone_640x1136.png', 640, 1136, null, 'iphone', 1),
+                            new FileSpec('-Landscape~ipad_1024x748.png', 1024, 748, null, 'ipad', 1, 'landscape'),
+                            new FileSpec('-Landscape~ipad_1024x768.png', 1024, 768, null, 'ipad', 1, 'landscape'),
+                            new FileSpec('-Landscape@2x~ipad_2048x1496.png', 2048, 1496, null, 'ipad', 2, 'landscape'),
+                            new FileSpec('-Landscape@2x~ipad_2048x1536.png', 2048, 1536, null, 'ipad', 2, 'landscape'),
+                            new FileSpec('~ipad.png', 1536, 2008, null, 'ipad', 1, 'portrait'),
+                            new FileSpec('-Portrait@2x~ipad_1536x2048.png', 1536, 2048, null, 'ipad', 2, 'portrait'),
+                            new FileSpec('-Portrait@2x~ipad_1536x2008.png', 1536, 2008, null, 'ipad', 2, 'portrait'),
+                            new FileSpec('.png', 768, 1004, null, 'ipad', 1, 'portrait'),
+                            new FileSpec('-Portrait~ipad_768x1024.png', 768, 1024, null, 'ipad', 1, 'portrait'),
+                            new FileSpec('-750@2x~iphone6-portrait_750x1334.png', 750, 1334, null, 'iphone', 2, 'portrait'),
+                            new FileSpec('-750@2x~iphone6-landscape_1334x750.png', 1334, 750, null, 'iphone', 2, 'landscape'),
+                            new FileSpec('-1242@3x~iphone6s-portrait_1242x2208.png', 1242, 2208, null, 'iphone', 3, 'portrait'),
+                            new FileSpec('-1242@3x~iphone6s-landscape_2208x1242.png', 2208, 1242, null, 'iphone', 3, 'landscape'),
                         ]
                     }
                 ]
@@ -298,6 +318,25 @@ export class ToolsComponent extends Vue {
         return result;
     }
 
+    simpleImageResize(img, canvas): Promise<ImageData> {
+        // resize the given image onto the destination canvas
+        let imgDataPromise = new Promise<ImageData>((resolve, reject) => {
+            let context = canvas.getContext('2d');
+
+
+            // canvas.width = img.width;
+            // canvas.height = img.height;
+            context.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
+            // context.drawImage(img, img.width, img.height);
+            setTimeout(() => {
+                let imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+                resolve(imgData);
+            }, 500);
+        });
+
+        return imgDataPromise;
+    }
+
     getImageData(imgSrcData: string): Promise<ImageData> {
 
         let imgDataPromise = new Promise<ImageData>((resolve, reject) => {
@@ -310,9 +349,9 @@ export class ToolsComponent extends Vue {
             img.onload = () => {
                 canvas.width = img.width;
                 canvas.height = img.height;
-                context.drawImage(img, 0, 0, canvas.width, canvas.height);
+                context.drawImage(img, 0, 0, img.width, img.height);
                 setTimeout(() => {
-                    let imgData = context.getImageData(0, 0, img.width, img.height);
+                    let imgData = context.getImageData(0, 0, canvas.width, canvas.height);
                     resolve(imgData);
                 }, 500);
 
@@ -356,7 +395,6 @@ export class ToolsComponent extends Vue {
                     canvas.width = maxDimension;
                     canvas.height = (srcImage.imgData.height / srcImage.imgData.width) * maxDimension;
 
-
                 } else {
                     // portrait aspect
                     // original width / original height * new height = new width
@@ -364,27 +402,24 @@ export class ToolsComponent extends Vue {
                     let maxDimension = fileSpec.width;
                     canvas.width = (srcImage.imgData.width / srcImage.imgData.height) * maxDimension;
                     canvas.height = maxDimension;
-
                 }
-
-
             }
+
             const img = new Image();
 
             img.onload = () => {
 
-                setTimeout(() => {
+               // setTimeout(() => {
 
                     // if image has no alpha, fill with background color based on sample
-
-
-
+                    console.log(`resizing ${img.width} x ${img.height} to ${fileSpec.width} x ${fileSpec.height}  canvas: ${canvas.width}x${canvas.height}`);
                     this.pica.resize(img, canvas, {
                         unsharpAmount: 80,
                         unsharpRadius: 0.6,
                         unsharpThreshold: 2,
                         alpha: bundleSpec.useAlpha
                     })
+                        // this.simpleImageResize(img, canvas)
                         .then((result) => {
 
                             if (bundleSpec.maintainAspectRatio) {
@@ -407,7 +442,9 @@ export class ToolsComponent extends Vue {
                                 ctx.drawImage(canvas, destx, desty);
                                 canvas = destCanvas;
                             }
-                            console.log('resize done, adding to bundle!');
+
+                            console.log('resize done, adding to bundle.');
+
                             // take generated image and archive it in our bundle
                             let imgData = canvas.toDataURL('image/png');
 
@@ -426,9 +463,11 @@ export class ToolsComponent extends Vue {
                             return resolve(true);
 
                         });
-                }, 500);
+              //  }, 500);
 
             };
+
+            // trigger image load for source image, which then triggers processing onload
             img.src = srcImage.imgSrcDataBase64;
         });
 
