@@ -1,76 +1,13 @@
+
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { Logger } from '../../util/log';
 import * as fileSaver from 'file-saver';
 import * as JSZip from 'JSZip';
-
 import Pica from 'pica';
-
 import { setTimeout } from 'timers';
-
-interface ImageSpec {
-    fileName: string;
-    path?: string;
-    width: number;
-    height: number;
-    idiom?: string;
-    scale: number;
-    imgData?: string;
-}
-
-interface RGBA {
-    r: number;
-    g: number;
-    b: number;
-    a: number;
-}
-
-interface ImageDataSet {
-    // base64 version of image
-    imgSrcDataBase64: string;
-
-    // img data version of image
-    imgData: ImageData;
-}
-
-class FileSpec implements ImageSpec {
-    constructor(
-        public fileName: string,
-        public width: number,
-        public height: number,
-        public path = null,
-        public idiom: string = null,
-        public scale: number = null,
-        public orientation: string = null,
-
-    ) { }
-}
-
-interface BundleSpec {
-    category: string;
-    path: string;
-    prefix?: string;
-    imageSet: Array<ImageSpec>;
-    manifest?: string;
-    useAlpha: boolean;
-    maintainAspectRatio: boolean;
-    resizeFromCentre: boolean;
-}
-
-interface PlatformSpec {
-    id: string;
-    title: string;
-    icon: string;
-    path: string;
-    instructions: string;
-    bundleSpecs: Array<BundleSpec>;
-    includeInBundle: boolean;
-}
-
-interface ExportSpec {
-    platforms: Array<PlatformSpec>;
-}
-
+import { FileSpec, PlatformSpec, RGBA, BundleSpec, ImageSpec, ImageDataSet } from '../../models/models';
+import { PlatformFileSpecs } from './../../models/platformFileSpecs';
 
 @Component({
     template: require('./tools.html')
@@ -85,6 +22,7 @@ export class ToolsComponent extends Vue {
     itemsProcessed: number = 0;
     isArchiveReady: boolean = false;
     isProcessing: boolean = false;
+    isCropSplashFromCentreMode: boolean = false;
     selectedIconFile: any = null;
     selectedSplashFile: any = null;
     processingProgress: number = 0;
@@ -101,186 +39,10 @@ export class ToolsComponent extends Vue {
     mounted() {
         if (!this.logger) this.logger = new Logger();
 
-        this.setupSpecs();
+        this.allPlatforms = PlatformFileSpecs.Specs();
 
         // prepare new zip for archive
         this.zipArchive = new JSZip();
-    }
-
-    setupSpecs() {
-        this.allPlatforms = new Array<PlatformSpec>();
-
-
-
-        let iOS: PlatformSpec = {
-            id: 'ios',
-            path: 'iOS/',
-            icon: 'fa-apple',
-            title: 'iOS',
-            instructions: 'Import into your Xcode project. Right-click Assets.xcassets, Show in finder. Drag and drop the contents of AppIcon.appiconset to replace the defaults. Note that launch images are no longer supported in iOS, instead you should use a Launch Screen storyboard.',
-            includeInBundle: true,
-            bundleSpecs:
-                [
-                    {
-                        category: 'icon',
-                        path: 'AppIcon.appiconset',
-                        prefix: 'Icon',
-                        manifest: 'Contents.json',
-                        useAlpha: true,
-                        maintainAspectRatio: false,
-                        resizeFromCentre: false,
-                        imageSet: [
-                            new FileSpec('-20x20@1x.png', 20, 20, null, 'ipad', 1),
-                            new FileSpec('-20x20@2x.png', 20, 20, null, 'iphone', 2),
-                            new FileSpec('-20x20@3x.png', 20, 20, null, 'iphone', 3),
-                            new FileSpec('-29x29@1x.png', 29, 29, null, 'iphone', 1),
-                            new FileSpec('-29x29@2x.png', 29, 29, null, 'iphone', 2),
-                            new FileSpec('-29x29@3x.png', 29, 29, null, 'iphone', 3),
-                            new FileSpec('-40x40@2x.png', 40, 40, null, 'iphone', 2),
-                            new FileSpec('-40x40@3x.png', 40, 40, null, 'iphone', 3),
-                            new FileSpec('-60x60@2x.png', 60, 60, null, 'iphone', 2),
-                            new FileSpec('-60x60@3x.png', 60, 60, null, 'iphone', 3),
-                            new FileSpec('-76x76@1x.png', 76, 76, null, 'ipad', 1),
-                            new FileSpec('-76x76@2x.png', 76, 76, null, 'ipad', 2),
-                            new FileSpec('-marketing-1024x1024.png', 1024, 1024, null, 'ios-marketing', 1),
-                        ]
-                    },
-                    {
-                        category: 'splash',
-                        path: 'LaunchImage.launchimage',
-                        prefix: 'LaunchImage',
-                        useAlpha: false,
-                        maintainAspectRatio: true,
-                        resizeFromCentre: true,
-                        imageSet: [
-                            /* no longer supported in iOS */
-                            new FileSpec('~iphone-320x480.png', 320, 480, null, 'iphone', 1),
-                            new FileSpec('~iphone_640x960.png', 640, 960, null, 'iphone', 1),
-                            new FileSpec('-568h@2x~iphone_640x1136.png', 640, 1136, null, 'iphone', 1),
-                            new FileSpec('-Landscape~ipad_1024x748.png', 1024, 748, null, 'ipad', 1, 'landscape'),
-                            new FileSpec('-Landscape~ipad_1024x768.png', 1024, 768, null, 'ipad', 1, 'landscape'),
-                            new FileSpec('-Landscape@2x~ipad_2048x1496.png', 2048, 1496, null, 'ipad', 2, 'landscape'),
-                            new FileSpec('-Landscape@2x~ipad_2048x1536.png', 2048, 1536, null, 'ipad', 2, 'landscape'),
-                            new FileSpec('~ipad.png', 1536, 2008, null, 'ipad', 1, 'portrait'),
-                            new FileSpec('-Portrait@2x~ipad_1536x2048.png', 1536, 2048, null, 'ipad', 2, 'portrait'),
-                            new FileSpec('-Portrait@2x~ipad_1536x2008.png', 1536, 2008, null, 'ipad', 2, 'portrait'),
-                            new FileSpec('.png', 768, 1004, null, 'ipad', 1, 'portrait'),
-                            new FileSpec('-Portrait~ipad_768x1024.png', 768, 1024, null, 'ipad', 1, 'portrait'),
-                            new FileSpec('-750@2x~iphone6-portrait_750x1334.png', 750, 1334, null, 'iphone', 2, 'portrait'),
-                            new FileSpec('-750@2x~iphone6-landscape_1334x750.png', 1334, 750, null, 'iphone', 2, 'landscape'),
-                            new FileSpec('-1242@3x~iphone6s-portrait_1242x2208.png', 1242, 2208, null, 'iphone', 3, 'portrait'),
-                            new FileSpec('-1242@3x~iphone6s-landscape_2208x1242.png', 2208, 1242, null, 'iphone', 3, 'landscape'),
-                        ]
-                    }
-                ]
-        };
-
-        this.allPlatforms.push(iOS);
-
-        let android: PlatformSpec = {
-            id: 'android',
-            path: 'android',
-            icon: 'fa-android',
-            title: 'Android',
-            instructions: 'Import into your Android Studio project',
-            includeInBundle: true,
-            bundleSpecs:
-                [
-                    {
-                        category: 'icon',
-                        path: null,
-                        prefix: 'icon',
-                        useAlpha: true,
-                        maintainAspectRatio: false,
-                        resizeFromCentre: false,
-                        imageSet: [
-                            new FileSpec('.png', 96, 96, 'drawable'),
-                            new FileSpec('.png', 36, 36, 'drawable-ldpi'),
-                            new FileSpec('.png', 48, 48, 'drawable-mdpi'),
-                            new FileSpec('.png', 72, 72, 'drawable-hdpi'),
-                            new FileSpec('.png', 96, 96, 'drawable-xhdpi'),
-                            new FileSpec('.png', 152, 152, 'drawable-xxhdpi'),
-                            new FileSpec('.png', 192, 192, 'drawable-xxxhdpi')
-                        ]
-                    },
-                    {
-                        category: 'splash',
-                        path: null,
-                        prefix: 'screen',
-                        useAlpha: false,
-                        maintainAspectRatio: true,
-                        resizeFromCentre: true,
-                        imageSet: [
-                            new FileSpec('.png', 480, 800, 'drawable'),
-                            new FileSpec('.png', 800, 480, 'drawable-land'),
-                            new FileSpec('.png', 200, 320, 'drawable-ldpi'),
-                            new FileSpec('.png', 320, 200, 'drawable-land-ldpi'),
-                            new FileSpec('.png', 320, 480, 'drawable-mdpi'),
-                            new FileSpec('.png', 480, 320, 'drawable-land-mdpi'),
-                            new FileSpec('.png', 480, 800, 'drawable-hdpi'),
-                            new FileSpec('.png', 800, 480, 'drawable-land-hdpi'),
-                            new FileSpec('.png', 720, 1280, 'drawable-xhdpi'),
-                            new FileSpec('.png', 1280, 720, 'drawable-land-xhdpi'),
-                            new FileSpec('.png', 960, 1600, 'drawable-xxhdpi'),
-                            new FileSpec('.png', 1600, 960, 'drawable-land-xxhdpi'),
-                            new FileSpec('.png', 1280, 1920, 'drawable-xxxhdpi'),
-                            new FileSpec('.png', 1920, 1280, 'drawable-land-xxxhdpi'),
-                        ]
-                    }
-                ]
-        };
-        this.allPlatforms.push(android);
-
-        let windowsStore: PlatformSpec = {
-            id: 'windows',
-            path: 'windows',
-            icon: 'fa-windows',
-            title: 'Windows Store',
-            instructions: 'Import into your Visual Studio project',
-            includeInBundle: true,
-            bundleSpecs:
-                [
-                    {
-                        category: 'icon',
-                        path: 'icons',
-                        prefix: 'icon',
-                        useAlpha: true,
-                        maintainAspectRatio: false,
-                        resizeFromCentre: false,
-                        imageSet: [
-                            new FileSpec('ApplicationIcon-16x16.png', 16, 16),
-                            new FileSpec('ApplicationIcon-24x24.png', 24, 24),
-                            new FileSpec('ApplicationIcon-30x30.png', 30, 30),
-                            new FileSpec('ApplicationIcon-32x32.png', 32, 32),
-                            new FileSpec('ApplicationIcon-42x42.png', 42, 42),
-                            new FileSpec('ApplicationIcon-48x48.png', 48, 48),
-                            new FileSpec('ApplicationIcon-50x50.png', 50, 50),
-                            new FileSpec('ApplicationIcon-54x54.png', 54, 54),
-                            new FileSpec('ApplicationIcon-70x70.png', 70, 70),
-                            new FileSpec('ApplicationIcon-90x90.png', 90, 90),
-                            new FileSpec('ApplicationIcon-150x150.png', 150, 150),
-                            new FileSpec('ApplicationIcon-120x120.png', 120, 120),
-                            new FileSpec('ApplicationIcon-210x210.png', 210, 210),
-                            new FileSpec('ApplicationIcon-256x256.png', 256, 256),
-                            new FileSpec('ApplicationIcon-270x270.png', 270, 270)
-                        ]
-                    },
-                    {
-                        category: 'splash',
-                        path: 'splashscreens',
-                        prefix: 'screen',
-                        useAlpha: false,
-                        maintainAspectRatio: true,
-                        resizeFromCentre: true,
-                        imageSet: [
-                            new FileSpec('Splashscreen-620x300.png', 620, 300),
-                            new FileSpec('Splashscreen-868x420.png', 868, 420),
-                            new FileSpec('Splashscreen-1116x540.png', 1116, 540),
-                        ]
-                    }
-                ]
-        };
-        this.allPlatforms.push(windowsStore);
     }
 
     selectionChanged(imageType: string, e: any) {
@@ -384,6 +146,8 @@ export class ToolsComponent extends Vue {
             canvas.width = newWidth;
             canvas.height = newHeight;
 
+            let isPortrait = true;
+
             if (bundleSpec.maintainAspectRatio) {
                 let aspectRatio = srcImage.imgData.width / srcImage.imgData.height;
                 if (fileSpec.width > fileSpec.height) {
@@ -398,7 +162,7 @@ export class ToolsComponent extends Vue {
                 } else {
                     // portrait aspect
                     // original width / original height * new height = new width
-
+                    isPortrait = true;
                     let maxDimension = fileSpec.width;
                     canvas.width = (srcImage.imgData.width / srcImage.imgData.height) * maxDimension;
                     canvas.height = maxDimension;
@@ -409,10 +173,28 @@ export class ToolsComponent extends Vue {
 
             img.onload = () => {
 
-               // setTimeout(() => {
+                // if image has no alpha, fill with background color based on sample
+                console.log(`resizing ${img.width} x ${img.height} to ${fileSpec.width} x ${fileSpec.height}  canvas: ${canvas.width}x${canvas.height}`);
 
-                    // if image has no alpha, fill with background color based on sample
-                    console.log(`resizing ${img.width} x ${img.height} to ${fileSpec.width} x ${fileSpec.height}  canvas: ${canvas.width}x${canvas.height}`);
+                // FIXME: no idea what this calculation should be (crop from center)
+                if (this.isCropSplashFromCentreMode && bundleSpec.maintainAspectRatio) {
+                    // copy source image to a canvas, croppped from centre
+
+                    let destx = -(img.width / 2) + (fileSpec.width / 2);
+                    let desty = -(img.height / 2) + (fileSpec.height / 2);
+
+                    let srcCtx = canvas.getContext('2d');
+
+                    srcCtx.drawImage(img, destx, desty);
+
+                    console.log(`crop from centre: fileSpec ${fileSpec.width}x${fileSpec.height} ': Src img: ${srcImage.imgData.width}x${srcImage.imgData.height} , Src Canvas ${canvas.width} x ${canvas.height} destX:${destx}, destY:${desty}`);
+
+                    this.addImageToBundle(canvas, fileSpec, platSpec, bundleSpec);
+
+                    return resolve(true);
+
+                } else {
+                    // resize to fit
                     this.pica.resize(img, canvas, {
                         unsharpAmount: 80,
                         unsharpRadius: 0.6,
@@ -430,6 +212,7 @@ export class ToolsComponent extends Vue {
                                 let sample: RGBA = this.splashColourSample;
 
                                 let ctx = destCanvas.getContext('2d');
+
                                 ctx.fillStyle = 'rgb(' + sample.r + ',' + sample.g + ',' + sample.b + ')';
                                 ctx.fillRect(0, 0, destCanvas.width, destCanvas.height);
                                 // centre destination coord to draw image to
@@ -443,27 +226,13 @@ export class ToolsComponent extends Vue {
                                 canvas = destCanvas;
                             }
 
-                            console.log('resize done, adding to bundle.');
-
-                            // take generated image and archive it in our bundle
-                            let imgData = canvas.toDataURL('image/png');
-
-                            fileSpec.imgData = imgData;
-
-                            let imgFolder = this.zipArchive.folder('bundle');
-
-                            imgFolder = imgFolder.folder(platSpec.path);
-                            if (bundleSpec.path) imgFolder = imgFolder.folder(bundleSpec.path);
-                            if (fileSpec.path) imgFolder = imgFolder.folder(fileSpec.path);
-                            let imgDataBase64 = imgData.replace(/^data:image\/(png|jpg);base64,/, '');
-
-                            // add file to zip folder
-                            imgFolder.file(bundleSpec.prefix + fileSpec.fileName, imgDataBase64, { base64: true });
+                            this.addImageToBundle(canvas, fileSpec, platSpec, bundleSpec);
 
                             return resolve(true);
 
                         });
-              //  }, 500);
+                }
+
 
             };
 
@@ -471,6 +240,30 @@ export class ToolsComponent extends Vue {
             img.src = srcImage.imgSrcDataBase64;
         });
 
+    }
+
+    addImageToBundle(
+        canvas: HTMLCanvasElement,
+        fileSpec: ImageSpec,
+        platSpec: PlatformSpec,
+        bundleSpec: BundleSpec
+    ) {
+        console.log('resize done, adding to bundle.');
+
+        // take generated image and archive it in our bundle
+        let imgData = canvas.toDataURL('image/png');
+
+        fileSpec.imgData = imgData;
+
+        let imgFolder = this.zipArchive.folder('bundle');
+
+        imgFolder = imgFolder.folder(platSpec.path);
+        if (bundleSpec.path) imgFolder = imgFolder.folder(bundleSpec.path);
+        if (fileSpec.path) imgFolder = imgFolder.folder(fileSpec.path);
+        let imgDataBase64 = imgData.replace(/^data:image\/(png|jpg);base64,/, '');
+
+        // add file to zip folder
+        imgFolder.file(bundleSpec.prefix + fileSpec.fileName, imgDataBase64, { base64: true });
     }
 
     downloadZip() {
@@ -492,7 +285,6 @@ export class ToolsComponent extends Vue {
 
     getSourceImageForProcessing(srcItemCategory: string, srcItemBlob: any): Promise<ImageDataSet> {
 
-
         let promise = new Promise<any>((resolve, reject) => {
             if (srcItemCategory === 'icon' && this.iconSrcData != null) {
                 resolve({
@@ -509,7 +301,6 @@ export class ToolsComponent extends Vue {
                     imgData: this.splashImgData
                 });
                 return;
-
             }
 
             // not got cached values, read image data blob and process
@@ -521,8 +312,6 @@ export class ToolsComponent extends Vue {
 
                 // use setTimeout to allow image time to complete load, otherwise reading image data doesn't always work
                 setTimeout(() => {
-
-
 
                     return this.getImageData(srcData).then((imgData) => {
 
@@ -547,13 +336,11 @@ export class ToolsComponent extends Vue {
 
             }, false);
 
-
             // fire above load event for file
             reader.readAsDataURL(srcItemBlob);
         });
 
         return promise;
-
     }
 
     async process() {
@@ -609,7 +396,6 @@ export class ToolsComponent extends Vue {
                 this.splashColourSample = this.samplePixelValue(this.splashImgData, 0, 0);
             }
 
-
             for (let platformSpec of this.allPlatforms) {
                 if (platformSpec.includeInBundle) {
                     for (let bundleSpec of platformSpec.bundleSpecs) {
@@ -625,7 +411,6 @@ export class ToolsComponent extends Vue {
                                 srcItem = this.selectedSplashFile;
                             }
                             if (srcItem != null) {
-
 
                                 setTimeout(async () => {
                                     await this.getSourceImageForProcessing(bundleSpec.category, srcItem).then((imgBundle: ImageDataSet) => {
@@ -648,14 +433,7 @@ export class ToolsComponent extends Vue {
                                             });
                                     });
                                 }, 1000);
-
-
-
-
-
                             }
-
-
                         }
 
                         // optionally include generated manifest in archiver
@@ -665,7 +443,6 @@ export class ToolsComponent extends Vue {
                             imgFolder = imgFolder.folder(platformSpec.path);
                             imgFolder = imgFolder.folder(bundleSpec.path);
                             imgFolder.file('Contents.json', JSON.stringify(bundleSpec.manifest, null, '\t'));
-
                         }
                     }
                 }
