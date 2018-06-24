@@ -32,7 +32,8 @@
                                 <input type="file" accept="image/*" id="fileupload-splash" v-on:change="selectionChanged('splash', $event)" name="FileUploadSplash">
                             </div>
                             <p>Select a Splashscreen image in PNG format (no transparency) measuring 4096*4096 pixels with the
-                                important stuff centred, we'll then resize from the centre outwards, sampling the top left corner colour as background.</p>
+                                important stuff centred, we'll then resize from the centre outwards, sampling the top left
+                                corner colour as background.</p>
 
 
                         </div>
@@ -63,8 +64,8 @@
 
                 <div v-if="isArchiveReady">
                     <button class="btn btn-primary btn-lg" v-on:click="downloadZip">Download Zip</button>
-                    <router-link  to="/tools/imagegorilla">Try Again</router-link>
-               
+                    <router-link to="/tools/imagegorilla">Try Again</router-link>
+
                 </div>
 
                 <p>We will generate an asset bundle you can download for the following platforms:</p>
@@ -96,16 +97,10 @@
 
             <div class="well well-sm">
                 <p> We'd really appreciate it if you could tell others about this app:
-                    <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://apetools.webprofusion.com" data-text="Check out Ape Tools, the quick way to generate all the icons and splash screens for your app:"
+                    <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://apetools.webprofusion.com" data-text="Check out Ape Tools, the quick way to generate all the icons and splash screens for your app:"
                         data-via="webprofusion">Share</a>
                 </p>
-                <p>If you like this tool you can help by sponsoring it's continued development:</p>
-                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                    <input type="hidden" name="cmd" value="_s-xclick">
-                    <input type="hidden" name="hosted_button_id" value="KB4LAUWZLFN4A">
-                    <input type="image" src="https://www.paypalobjects.com/en_AU/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal – The safer, easier way to pay online!">
-                    <img alt="" border="0" src="https://www.paypalobjects.com/en_AU/i/scr/pixel.gif" width="1" height="1">
-                </form>
+
 
 
             </div>

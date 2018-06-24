@@ -35,6 +35,7 @@ export class PlatformFileSpecs {
                             new FileSpec('-60x60@3x.png', 60, 60, null, 'iphone', 3),
                             new FileSpec('-76x76@1x.png', 76, 76, null, 'ipad', 1),
                             new FileSpec('-76x76@2x.png', 76, 76, null, 'ipad', 2),
+                            new FileSpec('-83.5@2x.png', 167, 167, null, 'ipad', 2),
                             new FileSpec('-marketing-1024x1024.png', 1024, 1024, null, 'ios-marketing', 1),
                         ]
                     },
@@ -67,8 +68,8 @@ export class PlatformFileSpecs {
                             new FileSpec('-750@2x~iphone6-landscape_1334x750.png', 1334, 750, null, 'iphone', 2, 'landscape'),
                             new FileSpec('-1242@3x~iphone6s-portrait_1242x2208.png', 1242, 2208, null, 'iphone', 3, 'portrait'),
                             new FileSpec('-1242@3x~iphone6s-landscape_2208x1242.png', 2208, 1242, null, 'iphone', 3, 'landscape'),
-                            new FileSpec('-1125@3x~iphonex-portrait_1125x2436.png', 1125, 2436, null, 'iphone', 3, 'portrait'),
-                            new FileSpec('-2436@3x~iphonex-landscape_2436x1125.png', 2436, 1125, null, 'iphone', 3, 'landscape'),
+                            new FileSpec('-1125@3x~iphoneX-portrait_1125x2436.png', 1125, 2436, null, 'iphone', 3, 'portrait'),
+                            new FileSpec('-2436@3x~iphoneX-landscape_2436x1125.png', 2436, 1125, null, 'iphone', 3, 'landscape'),
                         ]
                     }
                 ]
