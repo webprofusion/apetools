@@ -11,7 +11,7 @@ export class PlatformFileSpecs {
             icon: 'fa-apple',
             title: 'iOS',
             instructions: 'Import into your Xcode project. Right-click Assets.xcassets, Show in finder. Drag and drop the contents of AppIcon.appiconset to replace the defaults. Note that launch images are no longer supported in iOS, instead you should use a Launch Screen storyboard.',
-            includeInBundle: true,
+            includeInBundle: false,
             bundleSpecs:
                 [
                     {
@@ -74,8 +74,74 @@ export class PlatformFileSpecs {
                     }
                 ]
         };
-        
-        allPlatforms.push(iOS);
+
+        let ioniciOS: PlatformSpec = {
+            id: 'ionic.ios',
+            path: 'ionic/resources/ios/',
+            icon: 'fa-apple',
+            title: 'iOS (Ionic)',
+            instructions: 'Copy to app root /resources/ios/',
+            includeInBundle: false,
+            bundleSpecs:
+                [
+                    {
+                        category: 'icon',
+                        path: 'icon',
+                        prefix: 'icon',
+                        // manifest: 'Contents.json',
+                        useAlpha: true,
+                        maintainAspectRatio: false,
+                        resizeFromCentre: false,
+                        imageSet: [
+                            new FileSpec('.png', 57, 57),
+                            new FileSpec('@2x.png', 114, 114),
+                            new FileSpec('-40.png', 40, 40),
+                            new FileSpec('-40@2x.png', 80, 80),
+                            new FileSpec('-40@3x.png', 120, 120),
+                            new FileSpec('-50.png', 50, 50),
+                            new FileSpec('-50@2x.png', 100, 100),
+                            new FileSpec('-60.png', 60, 60),
+                            new FileSpec('-60@2x.png', 120, 120),
+                            new FileSpec('-60@3x.png', 180, 180),
+                            new FileSpec('-72.png', 72, 72),
+                            new FileSpec('-72@2x.png', 144, 144),
+                            new FileSpec('-76.png', 76, 76),
+                            new FileSpec('-76@2x.png', 152, 152),
+                            new FileSpec('-83.5@2x.png', 167, 167),
+                            new FileSpec('-small.png', 29, 29),
+                            new FileSpec('-small@2x.png', 58, 58),
+                            new FileSpec('-small@3x.png', 87, 87),
+                            new FileSpec('-1024.png', 1024, 1024)
+
+                        ]
+                    },
+                    {
+                        category: 'splash',
+                        path: 'splash',
+                        prefix: 'Default',
+                        useAlpha: false,
+                        maintainAspectRatio: true,
+                        resizeFromCentre: true,
+                        imageSet: [
+
+                            new FileSpec('-568h@2x~iphone.png', 640, 1136),
+                            new FileSpec('-667h.png', 750, 1134),
+                            new FileSpec('-736h.png', 2208, 1242),
+                            new FileSpec('-Landscape-736h.png', 1242, 2208),
+                            new FileSpec('-Landscape@2x~ipad.png', 1536, 2048),
+                            new FileSpec('-Landscape@~ipadpro.png', 2048, 2732),
+                            new FileSpec('-Landscape~ipad.png', 768, 1024),
+                            new FileSpec('-Portrait@2x~ipad.png', 2048, 1536),
+                            new FileSpec('-Portrait@~ipadpro.png', 2732, 2048),
+                            new FileSpec('-Portrait~ipad.png', 1024, 768),
+                            new FileSpec('@2x~iphone.png', 960, 640),
+                            new FileSpec('~iphone.png', 480, 320),
+                            new FileSpec('@2x~universal~anyany.png', 2732, 2732),
+                        ]
+                    }
+                ]
+        };
+
 
         let android: PlatformSpec = {
             id: 'android',
@@ -83,7 +149,7 @@ export class PlatformFileSpecs {
             icon: 'fa-android',
             title: 'Android',
             instructions: 'Import into your Android Studio project',
-            includeInBundle: true,
+            includeInBundle: false,
             bundleSpecs:
                 [
                     {
@@ -130,7 +196,60 @@ export class PlatformFileSpecs {
                 ]
         };
 
-        allPlatforms.push(android);
+
+        let ionicAndroid: PlatformSpec = {
+            id: 'ionic.android',
+            path: 'ionic/resources/android',
+            icon: 'fa-android',
+            title: 'Android (Ionic)',
+            instructions: 'Copy to app root /resources/android/',
+            includeInBundle: false,
+            bundleSpecs:
+                [
+                    {
+                        category: 'icon',
+                        path: 'icon',
+                        prefix: 'drawable',
+                        useAlpha: true,
+                        maintainAspectRatio: false,
+                        resizeFromCentre: false,
+                        imageSet: [
+                            new FileSpec('.png', 96, 96),
+                            new FileSpec('-ldpi-icon.png', 36, 36),
+                            new FileSpec('-mdpi-icon.png', 48, 48),
+                            new FileSpec('-hdpi-icon.png', 72, 72),
+                            new FileSpec('-xhdpi-icon.png', 96, 96),
+                            new FileSpec('-xxhdpi-icon.png', 152, 152),
+                            new FileSpec('-xxxhdpi-icon.png', 192, 192)
+                        ]
+                    },
+                    {
+                        category: 'splash',
+                        path: 'splash',
+                        prefix: 'drawable',
+                        useAlpha: false,
+                        maintainAspectRatio: true,
+                        resizeFromCentre: true,
+                        imageSet: [
+                            new FileSpec('-port-screen.png', 480, 800),
+                            new FileSpec('-land-screen.png', 800, 480),
+                            new FileSpec('-port-ldpi-screen.png', 200, 320),
+                            new FileSpec('-land-ldpi-screen.png', 320, 200),
+                            new FileSpec('-port-mdpi-screen.png', 320, 480),
+                            new FileSpec('-land-mdpi-screen.png', 480, 320),
+                            new FileSpec('-port-hdpi-screen.png', 480, 800),
+                            new FileSpec('-land-hdpi-screen.png', 800, 480),
+                            new FileSpec('-port-xhdpi-screen.png', 720, 1280),
+                            new FileSpec('-land-xhdpi-screen.png', 1280, 720),
+                            new FileSpec('-port-xxhdpi-screen.png', 960, 1600),
+                            new FileSpec('-land-xxhdpi-screen.png', 1600, 960),
+                            new FileSpec('-port-xxxhdpi-screen.png', 1280, 1920),
+                            new FileSpec('-land-xxxhdpi-screen.png', 1920, 1280),
+                        ]
+                    }
+                ]
+        };
+
 
         let windowsStore: PlatformSpec = {
             id: 'windows',
@@ -138,7 +257,7 @@ export class PlatformFileSpecs {
             icon: 'fa-windows',
             title: 'Windows Store',
             instructions: 'Import into your Visual Studio project',
-            includeInBundle: true,
+            includeInBundle: false,
             bundleSpecs:
                 [
                     {
@@ -181,7 +300,11 @@ export class PlatformFileSpecs {
                     }
                 ]
         };
-        
+
+        allPlatforms.push(android);
+        allPlatforms.push(iOS);
+        allPlatforms.push(ioniciOS);
+        allPlatforms.push(ionicAndroid);
         allPlatforms.push(windowsStore);
 
         return allPlatforms;

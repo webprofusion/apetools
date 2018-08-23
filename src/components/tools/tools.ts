@@ -27,6 +27,7 @@ export class ToolsComponent extends Vue {
     selectedSplashFile: any = null;
     processingProgress: number = 0;
     totalTasks: number = 0;
+    showPreviews: boolean = false;
 
     iconSrcData: string = null;
     iconImgData: ImageData = null;
