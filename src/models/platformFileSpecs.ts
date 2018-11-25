@@ -95,9 +95,13 @@ export class PlatformFileSpecs {
                         imageSet: [
                             new FileSpec('.png', 57, 57),
                             new FileSpec('@2x.png', 114, 114),
+                            new FileSpec('-20.png', 20, 20),
+                            new FileSpec('-24@2x.png', 48, 48),
+                            new FileSpec('-27.5@2x.png', 55, 55),
                             new FileSpec('-40.png', 40, 40),
                             new FileSpec('-40@2x.png', 80, 80),
                             new FileSpec('-40@3x.png', 120, 120),
+                            new FileSpec('-44@2x.png', 88, 88),
                             new FileSpec('-50.png', 50, 50),
                             new FileSpec('-50@2x.png', 100, 100),
                             new FileSpec('-60.png', 60, 60),
@@ -108,6 +112,8 @@ export class PlatformFileSpecs {
                             new FileSpec('-76.png', 76, 76),
                             new FileSpec('-76@2x.png', 152, 152),
                             new FileSpec('-83.5@2x.png', 167, 167),
+                            new FileSpec('-86@2x.png', 172, 172),
+                            new FileSpec('-98@2x.png', 196, 196),
                             new FileSpec('-small.png', 29, 29),
                             new FileSpec('-small@2x.png', 58, 58),
                             new FileSpec('-small@3x.png', 87, 87),
@@ -123,7 +129,6 @@ export class PlatformFileSpecs {
                         maintainAspectRatio: true,
                         resizeFromCentre: true,
                         imageSet: [
-
                             new FileSpec('-568h@2x~iphone.png', 640, 1136),
                             new FileSpec('-667h.png', 750, 1134),
                             new FileSpec('-736h.png', 1242, 2208),
@@ -137,6 +142,16 @@ export class PlatformFileSpecs {
                             new FileSpec('@2x~iphone.png', 960, 640),
                             new FileSpec('~iphone.png', 480, 320),
                             new FileSpec('@2x~universal~anyany.png', 2732, 2732),
+                            new FileSpec('@2x~ipad~anyany.png', 2732, 2732),
+                            new FileSpec('@2x~ipad~comany.png', 1278, 2732),
+                            new FileSpec('@2x~iphone~anyany.png', 1334, 1334),
+                            new FileSpec('@2x~iphone~comany.png', 750, 1334),
+                            new FileSpec('@2x~iphone~comcom.png', 1334, 750),
+                            new FileSpec('@3x~iphone~anyany.png', 2208, 2208),
+                            new FileSpec('@3x~iphone~anycom.png', 2208, 1242),
+                            new FileSpec('@3x~iphone~comany.png', 1242, 2208),
+                            new FileSpec('-2436h.png', 1125, 2436),
+                            new FileSpec('-Landscape-2436h.png', 2436, 1125),
                         ]
                     }
                 ]
