@@ -180,7 +180,7 @@ export class PlatformFileSpecs {
                             new FileSpec('.png', 48, 48, 'drawable-mdpi'),
                             new FileSpec('.png', 72, 72, 'drawable-hdpi'),
                             new FileSpec('.png', 96, 96, 'drawable-xhdpi'),
-                            new FileSpec('.png', 152, 152, 'drawable-xxhdpi'),
+                            new FileSpec('.png', 144, 144, 'drawable-xxhdpi'),
                             new FileSpec('.png', 192, 192, 'drawable-xxxhdpi')
                         ]
                     },
@@ -234,7 +234,7 @@ export class PlatformFileSpecs {
                             new FileSpec('-mdpi-icon.png', 48, 48),
                             new FileSpec('-hdpi-icon.png', 72, 72),
                             new FileSpec('-xhdpi-icon.png', 96, 96),
-                            new FileSpec('-xxhdpi-icon.png', 152, 152),
+                            new FileSpec('-xxhdpi-icon.png', 144, 144),
                             new FileSpec('-xxxhdpi-icon.png', 192, 192)
                         ]
                     },
