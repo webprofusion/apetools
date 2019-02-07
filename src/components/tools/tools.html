@@ -15,7 +15,7 @@
                     <div class="panel panel-default">
                         <div class="panel-body">
 
-                            <h3>1 - Select Your Icon</h3>
+                            <h3>Step 1 - Select Your Icon</h3>
                             <div class="input-group file-upload">
                                 <input type="file" accept="image/*" id="fileupload-icon" v-on:change="selectionChanged('icon', $event)" name="FileUploadIcon">
 
@@ -29,7 +29,7 @@
                 <div class="col-md-6">
                     <div class="panel panel-default">
                         <div class="panel-body">
-                            <h3>2 - Select Your Splashscreen</h3>
+                            <h3>Step 2 - Select Your Splashscreen</h3>
                             <div class="input-group file-upload">
                                 <input type="file" accept="image/*" id="fileupload-splash" v-on:change="selectionChanged('splash', $event)" name="FileUploadSplash">
                             </div>
@@ -51,7 +51,7 @@
 
             <div v-if="selectedIconFile || selectedSplashFile">
 
-                <h4 class="clearfix" style="clear: left">3 - Where the magic happens</h4>
+                <h4 class="clearfix" style="clear: left">Step 3 - Where the magic happens</h4>
 
                 <p v-if="!isProcessing && !isArchiveReady" class="alert alert-info">
                     Ready to Punch It?
@@ -63,7 +63,7 @@
                         <label for="checkbox"> show previews</label>
                 </p>
 
-                <div v-if="isProcessing">
+                <p v-if="isProcessing">
                     <i class="fa fa-spinner fa-spin fa-3x fa-fw" aria-hidden="true"></i>
                     {{msg}}
                     <div class="progress">
@@ -71,7 +71,7 @@
                             <span class="sr-only">Processing {{processingProgress}}% Complete</span>
                         </div>
                     </div>
-                </div>
+                </p>
 
                 <div v-if="isArchiveReady">
                     <button class="btn btn-primary btn-lg" v-on:click="downloadZip">Download Zip</button>
