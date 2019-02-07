@@ -33,9 +33,15 @@ export class ToolsComponent extends Vue {
     iconImgData: ImageData = null;
     splashSrcData: string = null;
     splashImgData: ImageData = null;
-    splashColourSample: RGBA = null;
+    splashColourSample: RGBA = { r: 0, g: 0, b: 0, a: 255 };
 
     pica = new Pica();
+
+    get sampleStyle() {
+        return  `background-color: rgb(${this.splashColourSample.r}, ${this.splashColourSample.g}, ${this.splashColourSample.b});`;
+        
+    }
+
 
     mounted() {
         if (!this.logger) this.logger = new Logger();
@@ -46,11 +52,19 @@ export class ToolsComponent extends Vue {
         this.zipArchive = new JSZip();
     }
 
-    selectionChanged(imageType: string, e: any) {
+    async selectionChanged(imageType: string, e: any) {
         // icon/splash changed
 
         if (imageType === 'splash') {
             this.selectedSplashFile = e.target.files[0];
+
+            // get image and sample it
+
+            await this.getSourceImageForProcessing('splash', this.selectedSplashFile);
+
+            // sample splash corner colour for canvas fill
+            this.splashColourSample = this.samplePixelValue(this.splashImgData, 10, 10);
+
         }
 
         if (imageType === 'icon') {
@@ -394,7 +408,7 @@ export class ToolsComponent extends Vue {
                 await this.getSourceImageForProcessing('splash', this.selectedSplashFile);
 
                 // sample splash corner colour for canvas fill
-                this.splashColourSample = this.samplePixelValue(this.splashImgData, 0, 0);
+                //this.splashColourSample = this.samplePixelValue(this.splashImgData, 0, 0);
             }
 
             for (let platformSpec of this.allPlatforms) {
