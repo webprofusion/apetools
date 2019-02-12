@@ -323,7 +323,7 @@ export class ToolsComponent extends Vue {
             let reader = new FileReader();
 
             reader.addEventListener('load', () => {
-                let srcData = reader.result;
+                let srcData = <string>reader.result;
 
                 // use setTimeout to allow image time to complete load, otherwise reading image data doesn't always work
                 setTimeout(() => {
@@ -408,7 +408,7 @@ export class ToolsComponent extends Vue {
                 await this.getSourceImageForProcessing('splash', this.selectedSplashFile);
 
                 // sample splash corner colour for canvas fill
-                //this.splashColourSample = this.samplePixelValue(this.splashImgData, 0, 0);
+                // this.splashColourSample = this.samplePixelValue(this.splashImgData, 0, 0);
             }
 
             for (let platformSpec of this.allPlatforms) {
