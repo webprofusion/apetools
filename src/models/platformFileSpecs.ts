@@ -35,7 +35,7 @@ export class PlatformFileSpecs {
                             new FileSpec('-60x60@3x.png', 60, 60, null, 'iphone', 3),
                             new FileSpec('-76x76@1x.png', 76, 76, null, 'ipad', 1),
                             new FileSpec('-76x76@2x.png', 76, 76, null, 'ipad', 2),
-                            new FileSpec('-83.5@2x.png', 167, 167, null, 'ipad', 2),
+                            new FileSpec('-83.5@2x.png', 167, 167, null, 'ipad', 1),
                             new FileSpec('-marketing-1024x1024.png', 1024, 1024, null, 'ios-marketing', 1),
                         ]
                     },
