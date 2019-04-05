@@ -70,6 +70,10 @@ export class PlatformFileSpecs {
                             new FileSpec('-1242@3x~iphone6s-landscape_2208x1242.png', 2208, 1242, null, 'iphone', 3, 'landscape'),
                             new FileSpec('-1125@3x~iphoneX-portrait_1125x2436.png', 1125, 2436, null, 'iphone', 3, 'portrait'),
                             new FileSpec('-2436@3x~iphoneX-landscape_2436x1125.png', 2436, 1125, null, 'iphone', 3, 'landscape'),
+                            new FileSpec('-1242@3x~iphoneXsMax-portrait_1242x2688.png', 1242, 2688, null, 'iphone', 3, 'portrait'),
+                            new FileSpec('-2688@3x~iphoneXsMax-landscape_2688x1242.png', 2688, 1242, null, 'iphone', 3, 'landscape'),
+                            new FileSpec('-828@2x~iphoneXr-portrait_828x1792.png', 828, 1792, null, 'iphone', 2, 'portrait'),
+                            new FileSpec('-1792@2x~iphoneXr-landscape_1792x828.png', 1792, 828, null, 'iphone', 2, 'landscape'),
                         ]
                     }
                 ]
