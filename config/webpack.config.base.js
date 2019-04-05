@@ -6,7 +6,7 @@ let config = {
     'main': helpers.root('/src/main.ts')
   },
   output: {
-    path: helpers.root('/dist'),
+    path: helpers.root('/docs'),
     filename: 'js/[name].[hash].js'
   },
   devtool: 'source-map',
