@@ -96,7 +96,7 @@
                         <div v-if="showPreviews">
                             <div v-for="bundle of platform.bundleSpecs">
                                 <h2>{{bundle.category}}</h2>
-
+                                <input v-model="bundle.prefix" placeholder="file name prefix">
                                 <ul class="list-group" v-for="fileSpec of bundle.imageSet">
                                     <li class="list-group-item">{{fileSpec.path}} {{fileSpec.prefix}} {{fileSpec.idiom}} {{fileSpec.fileName}}: {{fileSpec.width*fileSpec.scale}}x{{fileSpec.height*fileSpec.scale}}
                                         <img v-if="fileSpec.imgData" :src="fileSpec.imgData" style="max-width: 200px; max-height:200px;" class="img-thumbnail">
