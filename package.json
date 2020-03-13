@@ -71,7 +71,7 @@
     "karma-teamcity-reporter": "^1.1.0",
     "karma-webpack": "^2.0.13",
     "lodash.merge": "^4.6.2",
-    "minimist": "~1.2.0",
+    "minimist": "~1.2.2",
     "mocha": "^3.5.3",
     "ncp": "~2.0.0",
     "node-sass": "^4.13.1",
