@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/precache-manifest.b043ac9ec20744953fbfeedc7954defe.js"
+  "/precache-manifest.5e85e42e436b629fd2b1f89d260e62d0.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "apetools"});
