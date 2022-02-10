@@ -3,9 +3,9 @@ import { PlatformSpec, FileSpec } from './models';
 export class PlatformFileSpecs {
 
     public static Specs(): Array<PlatformSpec> {
-        let allPlatforms = new Array<PlatformSpec>();
+        const allPlatforms = new Array<PlatformSpec>();
 
-        let iOS: PlatformSpec = {
+        const iOS: PlatformSpec = {
             id: 'ios',
             path: 'iOS/',
             icon: 'fa-apple',
@@ -79,7 +79,7 @@ export class PlatformFileSpecs {
                 ]
         };
 
-        let ioniciOS: PlatformSpec = {
+        const ioniciOS: PlatformSpec = {
             id: 'ionic.ios',
             path: 'ionic/resources/ios/',
             icon: 'fa-apple',
@@ -162,7 +162,7 @@ export class PlatformFileSpecs {
         };
 
 
-        let android: PlatformSpec = {
+        const android: PlatformSpec = {
             id: 'android',
             path: 'android',
             icon: 'fa-android',
@@ -216,7 +216,7 @@ export class PlatformFileSpecs {
         };
 
 
-        let ionicAndroid: PlatformSpec = {
+        const ionicAndroid: PlatformSpec = {
             id: 'ionic.android',
             path: 'ionic/resources/android',
             icon: 'fa-android',
@@ -270,7 +270,7 @@ export class PlatformFileSpecs {
         };
 
 
-        let windowsStore: PlatformSpec = {
+        const windowsStore: PlatformSpec = {
             id: 'windows',
             path: 'windows',
             icon: 'fa-windows',

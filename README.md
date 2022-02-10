@@ -9,23 +9,26 @@ For when it all seems like too much work.
 
 Generate your App Icons and Splashscreens in all the required sizes to get your app to market faster.
 
-Note: this is the client side JS port of Ape Tools (which was originally server-side C#). This app uses VueJS with TypeScript.
+This app uses VueJS with TypeScript.
 
-If you are looking to contribute to development, all the magic happens in: https://github.com/webprofusion/apetools/blob/master/src/components/tools/tools.ts
+If you are looking to contribute to development, all the magic happens in: https://github.com/webprofusion/apetools/blob/master/src/views/Tools.vue
 
-
-## Build Setup
-
-``` bash
-# install dependencies
+## Project setup
+```
 npm install
+```
 
-# serve with hot reload at localhost:8082
-npm run dev
+### Compiles and hot-reloads for development
+```
+npm run serve
+```
 
-# build for production with minification
+### Compiles and minifies for production
+```
 npm run build
+```
 
-# clean the production build
-npm run clean
+### Lints and fixes files
+```
+npm run lint
 ```

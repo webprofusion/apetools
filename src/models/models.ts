@@ -1,12 +1,12 @@
 
 export interface ImageSpec {
     fileName: string;
-    path?: string;
+    path?: string | undefined | null;
     width: number;
     height: number;
-    idiom?: string;
-    scale: number;
-    imgData?: string;
+    idiom?: string | undefined | null;
+    scale: number | undefined | null;
+    imgData?: string | null;
 }
 
 export interface RGBA {
@@ -29,20 +29,20 @@ export class FileSpec implements ImageSpec {
         public fileName: string,
         public width: number,
         public height: number,
-        public path = null,
-        public idiom: string = null,
-        public scale: number = null,
-        public orientation: string = null
+        public path:string | undefined | null = null,
+        public idiom:string | undefined | null = null,
+        public scale: number | undefined | null = null,
+        public orientation:string | undefined | null = null
 
     ) { }
 }
 
 export interface BundleSpec {
     category: string;
-    path: string;
+    path: string | undefined |null;
     prefix?: string;
-    imageSet: Array<ImageSpec>;
-    manifest?: string;
+    imageSet: Array<FileSpec>;
+    manifest?: string | null;
     useAlpha: boolean;
     maintainAspectRatio: boolean;
     resizeFromCentre: boolean;

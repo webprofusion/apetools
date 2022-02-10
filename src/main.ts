@@ -1,30 +1,6 @@
-import Vue from 'vue';
-import VueRouter from 'vue-router';
+import { createApp } from 'vue'
+import App from './App.vue'
+import './registerServiceWorker'
+import router from './router'
 
-import './sass/main.scss';
-
-import { HomeComponent } from './components/home';
-import { AboutComponent } from './components/about';
-import { ContactComponent } from './components/contact';
-import { ToolsComponent } from './components/tools';
-import { NavbarComponent } from './components/navbar';
-
-// register the plugin
-Vue.use(VueRouter);
-
-let router = new VueRouter({
-  routes: [
-    { path: '/', component: HomeComponent },
-    { path: '/tools/imagegorilla', component: ToolsComponent },
-    { path: '/about', component: AboutComponent },
-    { path: '/contact', component: ContactComponent }
-  ]
-});
-
-new Vue({
-  el: '#app-main',
-  router: router,
-  components: {
-    'navbar': NavbarComponent
-  }
-});
+createApp(App).use(router).mount('#app')
