@@ -1,0 +1,5 @@
+{
+  "image": "node:16.15.1-bullseye",
+  "forwardPorts": [8080]
+}
+
